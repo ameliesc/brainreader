@@ -86,7 +86,7 @@ class ConvNet(object):
     def __call__(self, inp):
         """
         :param inp: An (n_samples, n_colours, size_y, size_x) input image
-        :return: An (n_samples, n_feature_maps, feature_size_y, feature_size_x) feature map.
+        :return: An (n_samples, n_feature_maps, map_size_y, map_size_x) feature representation.
         """
         return self.get_named_layer_activations(inp).values()[-1]
 
