@@ -20,8 +20,10 @@ def demo_brainreader():
     # Need to get dataset.  See from scipy.io import loadmat.  Example in pretrained_networks.py may be useful.
 
     raw_content_image = get_image('starry_night', size=(128, None))  # (im_size_y, im_size_x, n_colours)
+
     input_im = normalize(im2feat(raw_content_image))  # (n_samples, n_colours, im_size_y, im_size_x)  -- where n_samples=1 and n_colours=3
-    net = get_vgg_net(up_to_layer='conv2_1')  # See function get_vgg_net for the layers that you can go up to.
+    print input_im.shape
+    net = get_vgg_net(up_to_layer='pool4')  # See function get_vgg_net for the layers that you can go up to.
     func = net.compile()  # Compile the network into a function that takes input_im and returns features.  #TODO: add functionality for outputting multiple feature layers
     feat = func(input_im)  # shape (n_samples, n_feat_maps, feat_size_y, feat_size_x) -- where n_samples=1
 

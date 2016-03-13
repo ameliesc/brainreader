@@ -55,8 +55,8 @@ def get_new_size((cy, cx), new_size):
 if __name__ == '__main__':
     from matplotlib import pyplot as plt
 
-    im_name = 'limbo'
-    im = get_image(im_name)
+    im_name = 'starry_night'
+    im = get_image('starry_night', size=(128, None))
     plt.imshow(im)
     plt.title(im_name)
     plt.show()

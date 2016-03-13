@@ -7,11 +7,13 @@ import numpy as np
 __author__ = 'peter'
 
 
-type_matches = lambda collection, klass: np.array([isinstance(x, type) for x in list], dtype = np.bool)
+type_matches = lambda collection, klass: np.array(
+    [isinstance(x, type) for x in list], dtype=np.bool)
 
 find_nth_match = lambda bool_arr, n: np.nonzeros
 
-def get_vgg_net(up_to_layer = None, force_shared_parameters = True, pooling_mode = 'max'):
+
+def get_vgg_net(up_to_layer=None, force_shared_parameters=True, pooling_mode='max'):
     """
     :param up_to_layer: The layer to stop at.  Or a list of layers, in which case the network will go to the highest.
         Layers are identified by their string names:
@@ -25,34 +27,42 @@ def get_vgg_net(up_to_layer = None, force_shared_parameters = True, pooling_mode
     """
 
     filename = get_file(
-        relative_name = 'data/vgg-19.mat',
-        url = 'http://www.vlfeat.org/matconvnet/models/imagenet-vgg-verydeep-19.mat',
-        )
+        relative_name='data/vgg-19.mat',
+        url='http://www.vlfeat.org/matconvnet/models/imagenet-vgg-verydeep-19.mat',
+    )
     network_params = loadmat(filename)
-
     def struct_to_layer(struct):
         layer_type = struct[1][0]
         layer_name = str(struct[0][0])
         assert isinstance(layer_type, basestring)
         if layer_type == 'conv':
             w_orig = struct[2][0, 0]  # (n_rows, n_cols, n_in_maps, n_out_maps)
-            w = w_orig.T.swapaxes(2, 3)  # (n_out_maps, n_in_maps, n_rows, n_cols)  (Theano conventions)
+            # (n_out_maps, n_in_maps, n_rows, n_cols)  (Theano conventions)
+            w = w_orig.T.swapaxes(2, 3)
             b = struct[2][0, 1][:, 0]
-            layer = ConvLayer(w, b, force_shared_parameters=force_shared_parameters)
+            layer = ConvLayer(
+                w, b, force_shared_parameters=force_shared_parameters)
         elif layer_type in ('relu', 'softmax'):
             layer = Nonlinearity(layer_type)
         elif layer_type == 'pool':
-            layer = Pooler(region=tuple(struct[3][0].astype(int)), stride=tuple(struct[4][0].astype(int)), mode = pooling_mode)
+            layer = Pooler(region=tuple(struct[3][0].astype(int)), stride=tuple(
+                struct[4][0].astype(int)), mode=pooling_mode)
         else:
-            raise Exception("Don't know about this '%s' layer type." % layer_type)
+            raise Exception(
+                "Don't know about this '%s' layer type." % layer_type)
         return layer_name, layer
 
     print 'Loading VGG Net...'
-    network_layers = OrderedDict(struct_to_layer(network_params['layers'][0, i][0, 0]) for i in xrange(network_params['layers'].shape[1]))
+    network_layers = OrderedDict(struct_to_layer(network_params['layers'][0, i][
+                                 0, 0]) for i in xrange(network_params['layers'].shape[1]))
+
     if up_to_layer is not None:
         if isinstance(up_to_layer, (list, tuple)):
-            up_to_layer = network_layers.keys()[max(network_layers.keys().index(layer_name) for layer_name in up_to_layer)]
-        layer_names = [network_params['layers'][0, i][0, 0][0][0] for i in xrange(network_params['layers'].shape[1])]
-        network_layers = OrderedDict((k, network_layers[k]) for k in layer_names[:layer_names.index(up_to_layer)+1])
-    print 'Done.'
+            up_to_layer = network_layers.keys()[max(
+                network_layers.keys().index(layer_name) for layer_name in up_to_layer)]
+        layer_names = [network_params['layers'][0, i][0, 0][0][0]
+                       for i in xrange(network_params['layers'].shape[1])]
+        network_layers = OrderedDict((k, network_layers[k]) for k in layer_names[
+                                     :layer_names.index(up_to_layer) + 1])
+        print 'Done.'
     return ConvNet(network_layers)
