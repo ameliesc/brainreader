@@ -16,7 +16,7 @@ def im2feat(im):
 
     """
     centered_bgr_im = im[:, :, ::-1] - np.array([103.939, 116.779, 123.68])
-    feature_map_im = centered_bgr_im.dimshuffle('x', 2, 0, 1) if isinstance(centered_bgr_im, Variable) else np.rollaxis(centered_bgr_im, 2, 0)[None, :, :, :]
+    feature_map_im = np.rollaxis(centered_bgr_im, 2, 0)[None, :, :, :]
     return feature_map_im.astype(theano.config.floatX)
 
 
@@ -25,7 +25,7 @@ def feat2im(feat):
     :param feat: A (1, 3, size_y, size_x) array representing the BGR image that's ready to feed into VGGNet
     :returns: A (size_y, size_x, 3) array representing a RGB image.
     """
-    bgr_im = (feat.dimshuffle(0, 2, 3, 1) if isinstance(feat, Variable) else np.rollaxis(feat, 0, 2))[0, :, :, :]
+    bgr_im = np.rollaxis(feat, 0, 2)[0, :, :, :]
     decentered_rgb_im = (bgr_im + np.array([103.939, 116.779, 123.68]))[:, :, ::-1]
     return decentered_rgb_im
 
@@ -34,7 +34,7 @@ def demo_brainreader():
 
     # Need to get dataset.  See from scipy.io import loadmat.  Example in pretrained_networks.py may be useful.
 
-    raw_content_image = get_image('starry_night', size=(128, None))  # (im_size_y, im_size_x, n_colours)
+    raw_content_image = get_image('starry_night', size=(224, None))  # (im_size_y, im_size_x, n_colours)
 
     input_im = im2feat(raw_content_image)  # (n_samples, n_colours, im_size_y, im_size_x)  -- where n_samples=1 and n_colours=3
     print input_im.shape
