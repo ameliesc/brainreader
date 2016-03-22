@@ -34,7 +34,7 @@ def demo_brainreader():
 
     # Need to get dataset.  See from scipy.io import loadmat.  Example in pretrained_networks.py may be useful.
 
-    raw_content_image = get_image('starry_night', size=(224, None))  # (im_size_y, im_size_x, n_colours)
+    raw_content_image = get_image('starry_night', size=(224, 224))  # (im_size_y, im_size_x, n_colours)
 
     input_im = im2feat(raw_content_image)  # (n_samples, n_colours, im_size_y, im_size_x)  -- where n_samples=1 and n_colours=3
     print input_im.shape

@@ -10,22 +10,27 @@ __author__ = 'peter'
 @symbolic
 class ConvLayer(object):
 
-    def __init__(self, w, b, force_shared_parameters = True):
+    def __init__(self, w, b, force_shared_parameters = True, border_mode = 'valid', filter_flip = True):
         """
         w is the kernel, an ndarray of shape (n_output_maps, n_input_maps, w_size_y, w_size_x)
         b is the bias, an ndarray of shape (n_output_maps, )
         force_shared_parameters: Set to true if you want to make the parameters shared variables.  If False, the
             parameters will be
+        :param border_mode: {'valid', 'full', 'half', int, (int1, int2)}.  Afects
+            default is 'valid'.  See theano.tensor.nnet.conv2d docstring for details.
         """
         self.w = create_shared_variable(w) if force_shared_parameters else tt.constant(w)
         self.b = create_shared_variable(b) if force_shared_parameters else tt.constant(b)
+        self.border_mode = border_mode
+        self.filter_flip = filter_flip
 
     def __call__(self, x):
         """
         param x: A (n_samples, n_input_maps, size_y, size_x) image/feature tensor
         return: A (n_samples, n_output_maps, size_y-w_size_y+1, size_x-w_size_x+1) tensor
         """
-        return tt.nnet.conv2d(input=x, filters=self.w) + self.b[:, None, None]
+        print 'Conv Input Shape: %s' % (x.ishape, )
+        return tt.nnet.conv2d(input=x, filters=self.w, border_mode=self.border_mode, filter_flip=self.filter_flip) + self.b[:, None, None]
 
     @property
     def parameters(self):
@@ -41,6 +46,7 @@ class Nonlinearity(object):
         self.activation = get_named_activation_function(activation)
 
     def __call__(self, x):
+        print 'Nonlinearity Input Shape: %s' % (x.ishape, )
         return self.activation(x)
 
 @symbolic
@@ -64,6 +70,7 @@ class Pooler(object):
         :param x: An (n_samples, n_maps, size_y, size_x) tensor
         :return: An (n_sample, n_maps, size_y/ds[0], size_x/ds[1]) tensor
         """
+        print 'Pooler Input Shape: %s' % (x.ishape, )
         return pool_2d(x, ds = self.region, st = self.stride, mode = self.mode)
 
 
