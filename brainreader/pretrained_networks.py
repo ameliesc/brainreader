@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from brainreader.convnets import ConvLayer, Nonlinearity, Pooler, ConvNet
 from fileman.file_getter import get_file
+from general.should_be_builtins import bad_value
 from scipy.io import loadmat
 import numpy as np
 
@@ -15,6 +16,10 @@ find_nth_match = lambda bool_arr, n: np.nonzeros
 
 def get_vgg_net(up_to_layer=None, force_shared_parameters=True, pooling_mode='max'):
     """
+    Load the 19-layer VGGNet.
+    Info: https://gist.github.com/ksimonyan/3785162f95cd2d5fee77#file-readme-md
+    More Details: http://cs231n.github.io/convolutional-networks/#case
+
     :param up_to_layer: The layer to stop at.  Or a list of layers, in which case the network will go to the highest.
         Layers are identified by their string names:
         ['conv1_1', 'relu1_1', 'conv1_2', 'relu1_2', 'pool1', 'conv2_1', 'relu2_1', 'conv2_2', 'relu2_2', 'pool2',
@@ -40,8 +45,8 @@ def get_vgg_net(up_to_layer=None, force_shared_parameters=True, pooling_mode='ma
             # (n_out_maps, n_in_maps, n_rows, n_cols)  (Theano conventions)
             w = w_orig.T.swapaxes(2, 3)
             b = struct[2][0, 1][:, 0]
-            layer = ConvLayer(
-                w, b, force_shared_parameters=force_shared_parameters)
+            padding = 0 if layer_name.startswith('fc') else 1 if layer_name.startswith('conv') else bad_value(layer_name)
+            layer = ConvLayer(w, b, force_shared_parameters=force_shared_parameters, border_mode=padding, filter_flip=False)  # Note: Should filter_flip be true...? Need to check
         elif layer_type in ('relu', 'softmax'):
             layer = Nonlinearity(layer_type)
         elif layer_type == 'pool':
