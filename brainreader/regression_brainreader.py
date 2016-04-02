@@ -6,46 +6,53 @@ from plotting.data_conversion import put_data_in_grid
 from sklearn import linear_model
 import h5py
 from scipy.misc import imresize
+from data_preprocessing import get_data
 
 __author__ = 'amelie'
 
 
 def im2feat(im):
-    im = imresize(im, (256, 256))
-    np.transpose (np.dstack((im, im, im)))
+    im = imresize(im, (224, 224))
+    np.transpose(np.dstack((im, im, im)))
     return im
-#prepcossing of image :
-## 1 smooth
-## remove the mean 
-def feat2im(feat): return feat.dimshuffle(0, 2, 3, 1)[0, :, :, :] if isinstance(feat, Variable) else np.rollaxis(feat, 0,2)[0, :, :, :]
+# prepcossing of image :
+# 1 smooth
+# remove the mean
+
+
+def feat2im(feat): return feat.dimshuffle(0, 2, 3, 1)[0, :, :, :]\
+    if isinstance(feat, Variable) else np.rollaxis(feat, 0, 2)[0, :, :, :]
+
 
 def normalize(arr): return (arr - np.mean(arr)) / np.std(arr)
 
 
+def setup_net():
+    net = get_vgg_net(up_to_layer='fc8')
+    # See function get_vgg_net for the layers that you can
+    func = net.compile()
+    return func
+
+
 def demo_brainreader():
-    
+    stimuli_train, response_train = get_data(response=1)
 
-    stimuli = loadmat('Stimuli.mat')
-    stim_train = stimuli['stimTrn'] #size 1750 x 128 x 128
-    stim_valid = stimuli['stimVal']
+    func = setup_net()
+    imput_im = np.empty([1, 3, 224, 224])
+    imput_im[0] = normalize(im2feat(stimuli_train[0]))
+    feat = np.squeeze(func(imput_im))
+    regr_x = np.empty([1750, feat.shape[0]])
+    regr_x[0] = feat
+    for i in range(1: regr_x.shape[0]):
+        imput_im[0] = normalize(im2feat(stimuli_train[i]))
+        feat = np.squeeze(func(imput_im))
+        regr_x = np.empty([1750, feat.shape[0]])
+        regr_x[i] = feat
 
-    # Reshape stimuli greyscale into rgb
-    stimuli = np.empty([1750,3,256,256])
-    for i in range (0,stim_train.shape[0]):
-
-        stimuli[i] = normalize(im2feat(stim_train[i]))
-
-    net = get_vgg_net(up_to_layer='fc8')  # See function get_vgg_net for the layers that you can go up to.
-    func = net.compile()  # Compile the network into a function that takes input_im and returns features.  #TODO: add functionality for outputting multiple feature layers
-    imput_im = np.empty([1,3,244,244])
-    imput_im[0] = stimuli[0]
-    feat = func(imput_im)  # shape (n_samples, n_feat_maps, feat_size_y, feat_size_x) -- where n_samples=1
-    print feat.shape
-    response = h5py.File('EstimatedResponses.mat')
-    response_train = response['dataTrnS1']
     regr = linear_model.LinearRegression()
-    target_voxel_i = response_train[0:1740][0]
-    regr.fit(feat, target_voxel_i)
+
+    # X needs n samples and n features
+    regr.fit(regr_x, response_train)
 
     # plt.subplot(2, 1, 1)
     # plt.imshow(stim_train[0], cmap='gray')
