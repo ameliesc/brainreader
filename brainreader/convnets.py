@@ -29,7 +29,6 @@ class ConvLayer(object):
         param x: A (n_samples, n_input_maps, size_y, size_x) image/feature tensor
         return: A (n_samples, n_output_maps, size_y-w_size_y+1, size_x-w_size_x+1) tensor
         """
-        print 'Conv Input Shape: %s' % (x.ishape, )
         return tt.nnet.conv2d(input=x, filters=self.w, border_mode=self.border_mode, filter_flip=self.filter_flip) + self.b[:, None, None]
 
     @property
@@ -46,7 +45,6 @@ class Nonlinearity(object):
         self.activation = get_named_activation_function(activation)
 
     def __call__(self, x):
-        print 'Nonlinearity Input Shape: %s' % (x.ishape, )
         return self.activation(x)
 
 @symbolic
@@ -70,7 +68,6 @@ class Pooler(object):
         :param x: An (n_samples, n_maps, size_y, size_x) tensor
         :return: An (n_sample, n_maps, size_y/ds[0], size_x/ds[1]) tensor
         """
-        print 'Pooler Input Shape: %s' % (x.ishape, )
         return pool_2d(x, ds = self.region, st = self.stride, mode = self.mode)
 
 
@@ -97,6 +94,7 @@ class ConvNet(object):
         """
         return self.get_named_layer_activations(inp).values()[-1]
 
+    @symbolic
     def get_named_layer_activations(self, x):
         """
         :returns: An OrderedDict<layer_name/index, activation>
@@ -105,6 +103,8 @@ class ConvNet(object):
         """
         named_activations = OrderedDict()
         for name, layer in self.layers.iteritems():
+            print '%s input shape: %s' % (name, x.ishape)
             x = layer(x)
             named_activations[name] = x
+        print '%s output shape: %s' % (name, x.ishape)
         return named_activations
