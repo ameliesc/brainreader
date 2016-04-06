@@ -72,10 +72,12 @@ class Pooler(object):
 class UnPooler(object):
 
     def __init__(self, switch, region, stride = None):
+        
         assert len(region) == 2, 'Region must consist of two integers.  Got: %s' % (region, )
         if stride is None:
             stride = region
-        
+
+
     def __call__(self, x):
         """
         Input:
