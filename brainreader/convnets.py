@@ -3,8 +3,7 @@ from plato.core import symbolic, create_shared_variable
 from plato.interfaces.helpers import get_named_activation_function
 import theano.tensor as tt
 from theano.tensor.signal.pool import pool_2d
-
-__author__ = 'peter'
+__ = 'peter'
 
 
 @symbolic
@@ -58,7 +57,7 @@ class Pooler(object):
         assert len(region) == 2, 'Region must consist of two integers.  Got: %s' % (region, )
         if stride is None:
             stride = region
-        assert len(region) == 2, 'Stride must consist of two integers.  Got: %s' % (region, )
+        assert len(stride) == 2, 'Stride must consist of two integers.  Got: %s' % (region, )
         self.region = region
         self.stride = stride
         self.mode = mode
@@ -69,7 +68,21 @@ class Pooler(object):
         :return: An (n_sample, n_maps, size_y/ds[0], size_x/ds[1]) tensor
         """
         return pool_2d(x, ds = self.region, st = self.stride, mode = self.mode)
+    
+class UnPooler(object):
 
+    def __init__(self, switch, region, stride = None):
+        assert len(region) == 2, 'Region must consist of two integers.  Got: %s' % (region, )
+        if stride is None:
+            stride = region
+        
+    def __call__(self, x):
+        """
+        Input:
+        - x: an (n_samples, n_maps, size_y, size_x) np.array for now
+        Output
+        - (n_samples, n_maps, size_y*ds[0], size_x*ds[1]) tensor
+        """
 
 @symbolic
 class ConvNet(object):
