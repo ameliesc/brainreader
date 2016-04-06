@@ -43,3 +43,4 @@ def create_switches(relu_out, pool_out, stride, region):
             j +=1
         i +=1
     return switch_matrix
+
