@@ -42,4 +42,4 @@ def create_switches(relu_out, pool_out, stride, region):
             k = region_beg_k + stride[0]
             j +=1
         i +=1
-    return switch_matrix, k, i
+    return switch_matrix
