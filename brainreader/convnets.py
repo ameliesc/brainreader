@@ -57,7 +57,7 @@ class Pooler(object):
         assert len(region) == 2, 'Region must consist of two integers.  Got: %s' % (region, )
         if stride is None:
             stride = region
-        assert len(stride) == 2, 'Stride must consist of two integers.  Got: %s' % (region, )
+        assert len(stride) == 2, 'Stride must consist of two integers.  Got: %s' % (stride, )
         self.region = region
         self.stride = stride
         self.mode = mode
@@ -75,6 +75,10 @@ class UnPooler(object):
         assert len(region) == 2, 'Region must consist of two integers.  Got: %s' % (region, )
         if stride is None:
             stride = region
+        assert len(stride) == 2, 'Stride must consist of two integers.  Got: %s' % (stride, )
+        self.region = region
+        self.stride = stride
+        self.switch = switch
         
     def __call__(self, x):
         """
