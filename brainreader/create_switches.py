@@ -3,6 +3,16 @@ from general.ezprofile import EZProfiler
 
 
 def creat_switches(relu_out, pool_out, stride, region):
+    """
+    Input:
+    - relu_out: convnet relu-later output preceeding pool-layer
+    - pool_out: convnet pool-layer outpus
+    - stride: pooling stride
+    - region: pooling region
+    Output:
+    Numpy matrix with ones indicating the maximum value of pooling region,
+    same dimensions as relu_out
+    """
     pool = pool_out[0][0]
     relu = relu_out[0][0]
     rowp, columnp = pool.shape[-2:]
@@ -12,7 +22,7 @@ def creat_switches(relu_out, pool_out, stride, region):
     region_end_l = range(region[1])[-1]
     switch_matrix = np.zeros(relu.shape)
     i = 0
-    while i < rowp:
+    while i < rowp: 
         j = 0
         region_beg_k = k
         region_end_k = region_beg_k + range(region[0])[-1]
@@ -27,7 +37,6 @@ def creat_switches(relu_out, pool_out, stride, region):
                     ## need to account for the case that same number occurs twice
                     if relu[k][l] ==  max_val:
                         switch_matrix[k][l] = 1
-                        print switch_matrix[k][l]
                     l += 1
                 l = region_beg_l + stride[1]
                 k += 1
