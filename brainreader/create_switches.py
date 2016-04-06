@@ -32,7 +32,6 @@ def create_switches(relu_out, pool_out, stride, region):
             while k < region_end_k:
                 region_beg_l = l
                 region_end_l = region_beg_l + range(region[1])[-1]
-                print "reastart l-loop"
                 while l < region_end_l:
                     ## need to account for the case that same number occurs twice
                     if relu[k][l] ==  max_val:
