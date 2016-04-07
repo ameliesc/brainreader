@@ -1,5 +1,4 @@
 import numpy as np
-from general.ezprofile import EZProfiler
 
 
 def create_switches(relu_out, pool_out, stride, region):
