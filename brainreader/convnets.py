@@ -61,14 +61,14 @@ class Pooler(object):
         assert len(region) == 2, 'Stride must consist of two integers.  Got: %s' % (region, )
         self.region = region
         self.stride = stride
-        self.mode = mode
+        self.mode = modex
 
     def __call__(self, x):
         """
         :param x: An (n_samples, n_maps, size_y, size_x) tensor
         :return: An (n_sample, n_maps, size_y/ds[0], size_x/ds[1]) tensor
         """
-        return pool_2d(x, ds = self.region, st = self.stride, mode = self.mode)
+        return pool_2d(x, ds = self.region, st = self.stride, mode = self.mode),return_switches(x[0][0], self.stride, self.region)
 
 
 @symbolic
