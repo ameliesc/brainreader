@@ -1,4 +1,5 @@
 import numpy as np
+import theano.tensor as tt
 
 
 def create_switches(relu_out, pool_out, stride, region):
@@ -19,7 +20,8 @@ def create_switches(relu_out, pool_out, stride, region):
     k = 0
     region_end_k = range(region[0])[-1]
     region_end_l = range(region[1])[-1]
-    switch_matrix = np.zeros(relu.shape)
+    switch_matrix = np.zeros_like(relu)
+    print type(switch_matrix[0][1])
     i = 0
     while i < rowp: 
         j = 0
@@ -34,7 +36,8 @@ def create_switches(relu_out, pool_out, stride, region):
                 while l < region_end_l:
                     ## need to account for the case that same number occurs twice
                     if relu[k][l] ==  max_val:
-                        switch_matrix[k][l] = 1
+                        switch_matrix[k][l] = 1.0
+                        print switch_matrix[k][l], k, l
                     l += 1
                 l = region_beg_l + stride[1]
                 k += 1
@@ -42,4 +45,3 @@ def create_switches(relu_out, pool_out, stride, region):
             j +=1
         i +=1
     return switch_matrix
-
