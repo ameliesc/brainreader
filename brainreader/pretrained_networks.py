@@ -53,8 +53,9 @@ def get_vgg_net(up_to_layer=None, force_shared_parameters=True, pooling_mode='ma
         elif layer_type in ('relu', 'softmax'):
             layer = Nonlinearity(layer_type)
         elif layer_type == 'pool':
-            layer = Pooler(region=tuple(struct[3][0].astype(int)), stride=tuple(
+            layer, switches = Pooler(region=tuple(struct[3][0].astype(int)), stride=tuple(
                 struct[4][0].astype(int)), mode=pooling_mode)
+            
         else:
             raise Exception(
                 "Don't know about this '%s' layer type." % layer_type)
