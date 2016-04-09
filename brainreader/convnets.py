@@ -57,7 +57,7 @@ class Pooler(object):
         assert len(region) == 2, 'Region must consist of two integers.  Got: %s' % (region, )
         if stride is None:
             stride = region
-        assert len(stride) == 2, 'Stride must consist of two integers.  Got: %s' % (region, )
+        assert len(stride) == 2, 'Stride must consist of two integers.  Got: %s' % (stride, )
         self.region = region
         self.stride = stride
         self.mode = mode
@@ -67,24 +67,8 @@ class Pooler(object):
         :param x: An (n_samples, n_maps, size_y, size_x) tensor
         :return: An (n_sample, n_maps, size_y/ds[0], size_x/ds[1]) tensor
         """
-        return pool_2d(x, ds = self.region, st = self.stride, mode = self.mode)
-    
-class UnPooler(object):
+        return pool_2d(x, ds = self.region, st = self.stride, mode = self.mode), return_switches(x, stride = self.stride, region = self.region())
 
-    def __init__(self, switch, region, stride = None):
-        
-        assert len(region) == 2, 'Region must consist of two integers.  Got: %s' % (region, )
-        if stride is None:
-            stride = region
-
-
-    def __call__(self, x):
-        """
-        Input:
-        - x: an (n_samples, n_maps, size_y, size_x) np.array for now
-        Output
-        - (n_samples, n_maps, size_y*ds[0], size_x*ds[1]) tensor
-        """
 
 @symbolic
 class ConvNet(object):

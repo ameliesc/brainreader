@@ -14,7 +14,7 @@ type_matches = lambda collection, klass: np.array(
 find_nth_match = lambda bool_arr, n: np.nonzeros
 
 
-def get_vgg_net(up_to_layer=None, force_shared_parameters=True, pooling_mode='max'):
+def get_vgg_net(up_to_layer=None, force_shared_parameters=True, pooling_mode='max', network_params=None):
     """
     Load the 19-layer VGGNet.
     Info: https://gist.github.com/ksimonyan/3785162f95cd2d5fee77#file-readme-md
@@ -30,12 +30,13 @@ def get_vgg_net(up_to_layer=None, force_shared_parameters=True, pooling_mode='ma
     :param force_shared_parameters: Create net with shared paremeters.
     :return: A ConvNet object representing the VGG network.
     """
+    if filename is None:
+        filename = get_file(
+            relative_name='data/vgg-19.mat',
+            url='http://www.vlfeat.org/matconvnet/models/imagenet-vgg-verydeep-19.mat',
+        )
+        network_params = loadmat(filename)
 
-    filename = get_file(
-        relative_name='data/vgg-19.mat',
-        url='http://www.vlfeat.org/matconvnet/models/imagenet-vgg-verydeep-19.mat',
-    )
-    network_params = loadmat(filename)
     def struct_to_layer(struct):
         layer_type = struct[1][0]
         layer_name = str(struct[0][0])
@@ -45,13 +46,16 @@ def get_vgg_net(up_to_layer=None, force_shared_parameters=True, pooling_mode='ma
             # (n_out_maps, n_in_maps, n_rows, n_cols)  (Theano conventions)
             w = w_orig.T.swapaxes(2, 3)
             b = struct[2][0, 1][:, 0]
-            padding = 0 if layer_name.startswith('fc') else 1 if layer_name.startswith('conv') else bad_value(layer_name)
-            layer = ConvLayer(w, b, force_shared_parameters=force_shared_parameters, border_mode=padding, filter_flip=False)  # Note: Should filter_flip be true...? Need to check
+            padding = 0 if layer_name.startswith('fc') else 1 if layer_name.startswith(
+                'conv') else bad_value(layer_name)
+            layer = ConvLayer(w, b, force_shared_parameters=force_shared_parameters,
+                              border_mode=padding, filter_flip=True)
         elif layer_type in ('relu', 'softmax'):
             layer = Nonlinearity(layer_type)
         elif layer_type == 'pool':
-            layer = Pooler(region=tuple(struct[3][0].astype(int)), stride=tuple(
+            layer, switches = Pooler(region=tuple(struct[3][0].astype(int)), stride=tuple(
                 struct[4][0].astype(int)), mode=pooling_mode)
+            
         else:
             raise Exception(
                 "Don't know about this '%s' layer type." % layer_type)
