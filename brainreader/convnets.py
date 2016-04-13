@@ -3,7 +3,9 @@ from plato.core import symbolic, create_shared_variable
 from plato.interfaces.helpers import get_named_activation_function
 import theano.tensor as tt
 from theano.tensor.signal.pool import pool_2d
-__ = 'peter'
+from create_switches import maxpool_positions
+
+__author__ = 'peter' 
 
 
 @symbolic
@@ -67,8 +69,23 @@ class Pooler(object):
         :param x: An (n_samples, n_maps, size_y, size_x) tensor
         :return: An (n_sample, n_maps, size_y/ds[0], size_x/ds[1]) tensor
         """
-        return pool_2d(x, ds = self.region, st = self.stride, mode = self.mode), return_switches(x, stride = self.stride, region = self.region())
+        return pool_2d(x, ds = self.region, st = self.stride, mode = self.mode)
 
+@symbolic
+class Switches(object):
+    
+    def __init__(self, region, stride = None):
+        assert len(region) == 2, 'Region must consist of two integers.  Got: %s' % (region, )
+        if stride is None:
+            stride = region
+        assert len(stride) == 2, 'Stride must consist of two integers.  Got: %s' % (stride, )
+        self.region = region
+        self.stride = stride
+
+
+    def __call__(self, x):
+        return maxpool_positions(x, stride = self.stride, region = self.region)
+    
 
 @symbolic
 class ConvNet(object):
@@ -92,7 +109,6 @@ class ConvNet(object):
         :return: An (n_samples, n_feature_maps, map_size_y, map_size_x) feature representation.
         """
         return self.get_named_layer_activations(inp).values()[-1]
-
     @symbolic
     def get_named_layer_activations(self, x):
         """
@@ -100,10 +116,26 @@ class ConvNet(object):
             If you instantiated the convnet with an OrderedDict, the keys will correspond to the keys for the layers.
             Otherwise, they will correspond to the index which identifies the order of the layer.
         """
+        # named_activations = OrderedDict()
+        # for name, layer in self.layers.iteritems():
+        #     print '%s input shape: %s' % (name, x.ishape)
+        #     x = layer(x)
+        #     named_activations[name] = x
+        # print '%s output shape: %s' % (name, x.ishape)
+        # return named_activations
         named_activations = OrderedDict()
         for name, layer in self.layers.iteritems():
-            print '%s input shape: %s' % (name, x.ishape)
-            x = layer(x)
-            named_activations[name] = x
-        print '%s output shape: %s' % (name, x.ishape)
+             print '%s input shape: %s' % (name, x.ishape)
+             #print self.layers
+             #print name
+             if "switch" in name:
+                 switch = layer(x)
+                 layer_x = switch
+             else:
+                 x = layer(x)
+                 layer_x = x
+             named_activations[name] = layer_x
+             print '%s output shape: %s' % (name, x.ishape)
+
         return named_activations
+   

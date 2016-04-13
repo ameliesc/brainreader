@@ -5,7 +5,6 @@ import pickle
 
 
 def load_conv_and_deconv(save = "no", network_params_conv = None):
-    print "Loading Vgg Network"
     if network_params_conv is None:
         filename = get_file(
             relative_name='data/vgg-19.mat',
@@ -42,7 +41,7 @@ def load_conv_and_deconv(save = "no", network_params_conv = None):
         pickle.dump(network_params_deconv, out)
         out.close()
     print "Done."
-    return network_params_deconv, network_params_conv
+    return network_params_deconv
     #for i in range(0,network_params_deconv['layers'].shape[1]):
      #   print str(network_params_deconv['layers'][0,i][0, 0][1][0]) + ' '
     #return network_params_deconv, network_params_conv
