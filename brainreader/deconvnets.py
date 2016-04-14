@@ -22,7 +22,7 @@ class Nonlinearity(object):
 @symbolic
 class Deconv(object):
 
-    def __init__(self, w, b, force_shared_parameters = True, border_mode = 'valid', filter_flip = True,):
+    def __init__(self, w, b, force_shared_parameters = True, border_mode = 'full', filter_flip = True):
         """
         w is the kernel, an ndarray of shape (n_output_maps, n_input_maps, w_size_y, w_size_x)
         b is the bias, an ndarray of shape (n_output_maps, )
@@ -36,14 +36,13 @@ class Deconv(object):
         self.b = create_shared_variable(b) if force_shared_parameters else tt.constant(b)
         self.border_mode = border_mode
         self.filter_flip = filter_flip
-
+        # + self.b[ :,None,None]
     def __call__(self, x):
         """
         param x: A (n_samples, n_input_maps, size_y, size_x) image/feature tensor
         return: A (n_samples, n_output_maps, size_y-w_size_y+1, size_x-w_size_x+1) tensor
         """
-        self.w = np.swapaxes(x,0,1)[:, :, ::-1, ::-1]
-        return tt.nnet.conv2d(input=x, filters=self.w, border_mode=self.border_mode, filter_flip=self.filter_flip) + self.b[:, None, None]
+        return tt.nnet.conv2d(input=(x - self.b[:, None, None]), filters=self.w, border_mode=self.border_mode, filter_flip=self.filter_flip)
 
     @property
     def parameters(self):
@@ -85,4 +84,5 @@ class DeconvNet(object):
         for name,layer in self.layers.iteritems():
             print '%s input shape: %s' % (name, x.ishape)
             x = layer(x)
+            print '%s output shape: %s' % (name, x.ishape)
         return x
