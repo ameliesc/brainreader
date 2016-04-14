@@ -6,7 +6,7 @@ from plotting.data_conversion import put_data_in_grid
 from sklearn import linear_model
 import h5py
 from scipy.misc import imresize
-from data_preprocessing import get_data
+
 from general.ezprofile import EZProfiler
 
 __author__ = 'amelie'
@@ -43,7 +43,7 @@ def demo_brainreader():
         imput_im[0] = normalize(im2feat(stimuli_train[0]))
         feat = np.squeeze(func(imput_im))
         regr_x = np.empty((1750, feat.shape[0] *feat.shape[1] * feat.shape[2]) # (1750, n_maps, size_y, size_x)
-        regr_x[0] = imresize(feat
+        regr_x[0] = np.reshape(feat,(feat.shape[0] *feat.shape[1] * feat.shape[2]))
     for i in range(1, regr_x.shape[0]):
         with EZProfiler(profiler_name = 'lap-time'):
             imput_im[0] = normalize(im2feat(stimuli_train[i]))
