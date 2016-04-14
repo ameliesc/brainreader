@@ -22,6 +22,7 @@ def get_data(subject = 'S1', response = 0, data = "train", roi = 1):
             response_train = response['dataTrn%s' % (subject)]
             indexes = np.where(roi_subject[0] == roi)[0]
             response_train = np.take(response_train, indexes, axis=1)
+            response_train = response_train[~np.isnan(response_train).any(axis=1)] #remove Nan 
             return stim_train, response_train
         else:
             return stim_train
