@@ -18,7 +18,8 @@ IMAGE_COLLECTION = {
     'the_shipwreck_of_the_minotaur': 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Shipwreck_turner.jpg',
     'scream': 'https://en.wikipedia.org/wiki/The_Scream#/media/File:The_Scream.jpg',
     'femme_nue_assise': 'https://upload.wikimedia.org/wikipedia/en/8/8f/Pablo_Picasso%2C_1909-10%2C_Figure_dans_un_Fauteuil_%28Seated_Nude%2C_Femme_nue_assise%29%2C_oil_on_canvas%2C_92.1_x_73_cm%2C_Tate_Modern%2C_London.jpg',
-    'composition_vii': 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Vassily_Kandinsky%2C_1913_-_Composition_7.jpg'
+    'composition_vii': 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Vassily_Kandinsky%2C_1913_-_Composition_7.jpg',
+    'trump': 'http://media4.s-nbcnews.com/j/newscms/2016_04/1396246/donald-trump-mug_5fea106e0eb494469a75e60d8f2b18ea.nbcnews-fp-320-320.jpeg'
     }
 
 def get_image(name, size = None):

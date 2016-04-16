@@ -37,12 +37,13 @@ class Deconv(object):
         self.border_mode = border_mode
         self.filter_flip = filter_flip
         # + self.b[ :,None,None]
+        # - self.b[:, None, None]
     def __call__(self, x):
         """
         param x: A (n_samples, n_input_maps, size_y, size_x) image/feature tensor
         return: A (n_samples, n_output_maps, size_y-w_size_y+1, size_x-w_size_x+1) tensor
         """
-        return tt.nnet.conv2d(input=(x - self.b[:, None, None]), filters=self.w, border_mode=self.border_mode, filter_flip=self.filter_flip)
+        return tt.nnet.conv2d(input= x, filters=self.w, border_mode=self.border_mode, filter_flip=self.filter_flip)
 
     @property
     def parameters(self):

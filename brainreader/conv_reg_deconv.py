@@ -15,6 +15,8 @@ from plotting.data_conversion import put_data_in_grid
 from sklearn import linear_model
 from scipy.io import loadmat
 from matplotlib import pyplot as plt
+from sklearn.kernel_ridge import KernelRidge
+from regressiontheano import LinearRegressor
 
 def im2feat(im):
     """
@@ -38,10 +40,11 @@ def feat2im(feat):
     decentered_rgb_im = (bgr_im + np.array([103.939, 116.779, 123.68]))[:, :, ::-1]
     return decentered_rgb_im
 
-def demo_brainreader(sample_size = 1750, layer_name = 'pool1'):
+def demo_brainreader(sample_size = 1750, layer_name = 'pool1', regression = 'online'):
     ### get data ###
     
     stimuli_train, response_train = get_data(response=1)
+    print response_train.shape
     input_im = np.empty([1, 3, 224, 224])
     input_im[0] = im2feat(stimuli_train[0])
 
@@ -53,43 +56,97 @@ def demo_brainreader(sample_size = 1750, layer_name = 'pool1'):
     feat = np.squeeze(named_features[layer_name + '_layer'])
     
     ### Regression ###
-    
+    print 'Begin Convolution training set...'
     regr_x = np.empty((sample_size, feat.shape[0] *feat.shape[1] * feat.shape[2])) # (1750, n_maps, size_y, size_x)
     regr_x[0] = np.reshape(feat,(feat.shape[0] *feat.shape[1] * feat.shape[2]))
     for i in range(1, sample_size):
         input_im[0] =im2feat(stimuli_train[i])
         named_features = func(input_im)
         feat = np.squeeze(named_features[layer_name + '_layer'])
-        print feat.shape
-        print (sample_size, feat.shape[0] *feat.shape[1] * feat.shape[2])
         #pickle.dump(feat,open("featuremaps.p", 'w'))
         regr_x[i] = np.reshape(feat,(feat.shape[0] *feat.shape[1] * feat.shape[2]))
+    print 'Finished.' 
 
-    regr = linear_model.LinearRegression()
-    # X needs n samples and n features
-    regr_model = regr.fit(regr_x, response_train[:sample_size])
+    n_samples = sample_size
+    n_features = regr_x.shape[1]
+    y_train = response_train[0:sample_size,:]
+    x_train = regr_x[:sample_size,:]
+    
+    stimuli_test, response_test = get_data(response = 1, data = 'test')
 
-    ### Deconvolution 
-    switch_dict = OrderedDict()
-    for name in named_features:
+    print 'Begin Convolution test set...'
+    regr_x_test = np.empty((stimuli_test.shape[0], feat.shape[0] *feat.shape[1] * feat.shape[2])) # (1750, n_maps, size_y, size_x)
+    regr_x_test[0] = np.reshape(feat,(feat.shape[0] *feat.shape[1] * feat.shape[2]))
+    
+    for i in range(1, stimuli_test.shape[0]):
+        input_im[0] =im2feat(stimuli_test[i])
+        named_features = func(input_im)
+        feat = np.squeeze(named_features[layer_name + '_layer'])
+        #pickle.dump(feat,open("featuremaps.p", 'w'))
+        regr_x_test[i] = np.reshape(feat,(feat.shape[0] *feat.shape[1] * feat.shape[2]))
+    print 'Finished.'
+    
+    y_test = response_test
+    x_test = regr_x_test
+    a = 2.5e-4
+    clf = KernelRidge(alpha = a)
+
+    if regression == 'ridge':
+
+    # ## Ridge Regression ##
+        voxel_predictions = OrderedDict()
+        voxel_coef = OrderedDict()
+        voxel_model = OrderedDict()
+        for i in range(0,1):
+            trained = clf.fit(x_train, y_train[:,i])
+            print clf.score(x_test, y_test[:,i])
+            voxel_model[i] = clf
+            voxel_predictions[i] = clf.predict(x_train)
+            voxel_coef[i] = clf.dual_coef_
+        return voxel_coef
+
+    ## online regression ###
+    if regression == 'online':
         
-        if 'switch' in name:
-            switch_dict[name] = named_features[name]
+        predictor = LinearRegressor(x_train.shape[1], response_train.shape[1])
+        f_train = predictor.train.compile()
+        f_predict = predictor.predict.compile()
+        training_data = regr_x
+        test_data = regr_x_test
+        training_target = y_train
+        test_target =  y_test
+        score_report_period = 100
+        n_epochs = 2
+        n_training_samples = x_train.shape[1]
+        for i in xrange(n_training_samples*n_epochs+1):
+            if i % score_report_period == 0:
+                out = f_predict(test_data)
+                test_cost = ((test_target-out)**2).sum(axis=1).mean(axis=0)
+                print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
+            f_train(training_data[[i % n_training_samples]], training_target[[i % n_training_samples]])
 
-    deconv = load_conv_and_deconv()
-    net = unwrap_deconvnet(switch_dict, network_params=deconv, from_layer= layer_name)
-    func = net.compile()
-    image_reconstruct = func( np.reshape(regr_model.coef_,feat) * feat)
+    
+    # ### Deconvolution 
+    # switch_dict = OrderedDict()
+    # for name in named_features:
+        
+    #     if 'switch' in name:
+    #         switch_dict[name] = named_features[name]
 
-    ### Plotting ###
-    plt.subplot(2, 1, 1)
-    plt.imshow(raw_content_image)
-    plt.title('Image')
-    plt.subplot(2, 1, 2)
-     # plt.imshow(put_data_in_grid(named_features[layer][0]),
-     #cmap='gray', interpolation = 'nearest')
-    plt.imshow(feat2im(image_reconstruct, cmap = 'gray'))
-    plt.title('Features')
-    plt.show()
+    # deconv = load_conv_and_deconv()
+    # net = unwrap_deconvnet(switch_dict, network_params=deconv, from_layer= layer_name)
+    # func = net.compile()
+    # image_reconstruct = func( np.reshape(predictor.coef_,feat) * feat)
 
-    return image_reconstruct
+    # ### Plotting ###
+    # plt.subplot(2, 1, 1)
+    # plt.imshow(raw_content_image)
+    # plt.title('Image')
+    # plt.subplot(2, 1, 2)
+    #  # plt.imshow(put_data_in_grid(named_features[layer][0]),
+    #  #cmap='gray', interpolation = 'nearest')
+    # plt.imshow(feat2im(image_reconstruct, cmap = 'gray'))
+    # plt.title('Features')
+    # plt.show()
+
+    # return image_reconstruct
