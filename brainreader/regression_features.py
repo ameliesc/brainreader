@@ -1,12 +1,7 @@
-from brainreader.pretrained_networks import get_vgg_net
-from brainreader.unwrap_deconvnet import get_deconv
-from brainreader.makedeconvnet import load_conv_and_deconv
+from pretrained_networks import get_vgg_net
 from theano.gof.graph import Variable
 import numpy as np
-import theano
-import h5py
-import cPickle as pickle
-from scipy.misc import imresize
+import theanofrom scipy.misc import imresize
 from data_preprocessing import get_data
 from collections import OrderedDict
 from scipy.io import loadmat, savemat
