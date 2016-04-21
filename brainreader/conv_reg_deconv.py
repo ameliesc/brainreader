@@ -21,38 +21,25 @@ from regression_features import get_featuremaps
 import cPickle as pickle
 
 
-def demo_brainreader(sample_size = 1750):
-    ### get data ###
-
-    layer_names = ['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2',
-                       'conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1',
-                       'conv4_2', 'conv4_3',  'conv4_4', 'conv5_1',
-                       'conv5_2',  'conv5_3',  'conv5_4',  'fc6',  'fc7',
-                       'fc8']
-
+def kernel_ridge():
+    print "Getting feature maps for training..."
+    feature_map_train = get_featuremaps(sample_size = 1750, data_set = 'train')
+    print "Getting feature maps for test..."
+    feature_map_test = get_featuremaps(sample_size = 120, data_set = 'test')
+    print "Done."
     voxel_predictions = OrderedDict()
     voxel_predictions[0] = 0
     voxel_coef = OrderedDict()
     voxel_coef[0] = 0
-    voxel_model = OrderedDict()
-    voxel_model[0] = 0:
-    
-
     for name in layer_names:
 
-        with open(r"train_%s.pickle" % (name), "rb") as input_file:
-            feature_map_train = cPickle.load(input_file)
-        with open(r"test_%s.pickle" % (name), "rb") as input_file:
-            feature_map_test = cPickle.load(input_file)
-
-        regr_x = feature_map_train
-        regr_x_test = feature_map_test
+        regr_x = feature_map_train[name]
+        regr_x_test = feature_map_test[name]
         n_samples = sample_size
         n_features = regr_x.shape[1]
         response_train = get_data(response = 1)
         y_train = response_train[0:sample_size,:]
         x_train = regr_x[:sample_size,:]
-    
         response_test = get_data(response = 1, data = 'test')
         y_test = response_test
         x_test = regr_x_test
@@ -66,11 +53,17 @@ def demo_brainreader(sample_size = 1750):
         print "feature map: %s" % (name)
         trained = clf.fit(x_train, y_train)
         print clf.score(x_test, y_test)
-        voxel_model[i] = clf
         predict = clf.predict(x_test)
         voxel_predictions[name] = predict
-        voxel_coef[name] = clf.dual_coef_  #n_target, #n_features
-        return voxel_coef, voxel_predictions
+        voxel_coef[name] = clf.dual_coef_  
+
+    print "Saving coefficients"
+    with open("voxel_coefficients.pickle", "wb") as output_file:
+                pickle.dump(voxel_coef, output_file, protocol=pickle.HIGHEST_PROTOCOL )
+    print "Saving predictions"
+    with open("voxel_predictions.pickle", "wb") as output_file:
+                pickle.dump(voxel_predictions, output_file, protocol=pickle.HIGHEST_PROTOCOL)
+    return voxel_coef, voxel_predictions
 
    
 

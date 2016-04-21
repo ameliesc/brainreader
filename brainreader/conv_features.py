@@ -69,10 +69,11 @@ def get_featuremaps(sample_size=120, layer_name=None, data_set='test'):
             feature_maps[l_name] = regr_x
             print "Done."
             
-        print "Saving feature_maps..."    
-        with open("train_%s.pickle" % (l_name), "wb") as output_file:
-                pickle.dump(feature_maps, output_file, protocol=pickle.HIGHEST_PROTOCOL)
+            print "Saving feature_maps..."    
+            with open("train_%s.pickle" % (l_name), "wb") as output_file:
+                pickle.dump(regr_x, output_file, protocol=pickle.HIGHEST_PROTOCOL)
         print "Done."
+        return feature_maps
 
 
 
