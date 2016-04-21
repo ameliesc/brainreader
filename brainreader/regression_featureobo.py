@@ -75,9 +75,11 @@ def get_feature(sample_size=120, layer_name=None, data_set='test'):
             return feature_maps
 
 def kernel_ridge():
-
+    print "Getting feature maps for training..."
     feature_map_train = get_featuremaps(sample_size = 1750, data_set = 'train')
+    print "Getting feature maps for test..."
     feature_map_test = get_featuremaps(sample_size = 120, data_set = 'test')
+    print "Done."
     voxel_predictions = OrderedDict()
     voxel_predictions[0] = 0
     voxel_coef = OrderedDict()
