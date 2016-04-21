@@ -16,7 +16,7 @@ def kernel_ridge():
     # print "Done."
     # voxel_prediction
     
-    ons = OrderedDict()
+    voxel_predictions = OrderedDict()
     voxel_predictions[0] = 0
     voxel_coef = OrderedDict()
     voxel_coef[0] = 0
