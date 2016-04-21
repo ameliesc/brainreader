@@ -13,7 +13,7 @@ def im2feat(im):
     :param im: A (size_y, size_x, 3) array representing a RGB image on a [0, 255] scale
     :returns: A (1, 3, size_y, size_x) array representing the BGR
     image that's ready to feed into VGGNet
-
+cat
     """
     im = imresize(
         im, (224, 224))  # update to vggnet requirements ;incorporate normalize
@@ -43,22 +43,22 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
                        'conv5_2',  'conv5_3',  'conv5_4',  'fc6',  'fc7',
                        'fc8']
 
-        
-        
+        stim = im2feat(stimuli_train[0])
+        input_im = stim
+        for i in range(1, sample_size):
+            
+            input_im = np.concatenate((input_im, im2feat(stimuli_train[i])))
+
         feature_maps = OrderedDict()
         for l_name in layer_names:
-            input_im[0] = im2feat(stimuli_train[0])
             net = get_vgg_net(up_to_layer = l_name )
             func = net.get_named_layer_activations.compile()
+            
             print 'Convolving image up to %s' % (l_name)
             named_features = func(input_im)
             feat = named_features[l_name + '_layer']
-            regr_x  = np.empty((sample_size, feat.shape[1] * feat.shape[2] * feat.shape[3]))
-            regr_x[0]  = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
-            for i in range(1, sample_size):
-                input_im[0] = im2feat(stimuli_train[i])
-                named_features = func(input_im)
-                regr_x[0]  = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
+
+            regr_x = np.reshape(feat, (sample_size, feat.shape[1] * feat.shape[2] * feat.shape[3]))
             feature_maps[l_name] = regr_x
     
         print "Saving Feature maps to matlab file..."

@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from convnets import ConvLayer, Nonlinearity, Pooler, ConvNet, Switches
+from brainreader.convnets import ConvLayer, Nonlinearity, Pooler, ConvNet, Switches
 from fileman.file_getter import get_file
 from general.should_be_builtins import bad_value
 from scipy.io import loadmat
