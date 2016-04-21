@@ -35,13 +35,13 @@ def kernel_ridge():
         print "load featuremap for testing.."
         feature_map_test = dd.io.load("featuremap_%s" % (name))
         print "Done."
+        
         y_train = get_data(response = 1)
         x_train = feature_map_train
         y_test = get_data(response = 1, data = 'test')
         x_test = feature_map_test
-        a = 2.5e-4
-        clf =  GridSearchCV(KernelRidge(alpha = a),cv=5,
-                   param_grid={"C": [1e0, 1e1, 1e2, 1e3, 1e-4, 2.5e-4],
+        clf =  GridSearchCV(KernelRidge(gamma=0.1),cv=5,
+                   param_grid={"alpha": [1e0, 1e1, 1e2, 1e3, 1e-4, 2.5e-4],
                                "gamma": np.logspace(-2, 2, 5)})
  
         print "Training using feature map: %s" % (name)
