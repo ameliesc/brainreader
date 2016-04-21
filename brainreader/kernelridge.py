@@ -29,7 +29,7 @@ def kernel_ridge():
                    'fc8']
 
     for name in layer_names:
-        feature_map_train = dd.io.load("featuremap_train_%s" % (name))
+        feature_map_train = dd.io.load("featuremap_train_%s.h5" % (name))
         feature_map_test = dd.io.load("featuremap_%s" % (name))
         n_samples = sample_size
         n_features = regr_x.shape[1]
@@ -44,7 +44,7 @@ def kernel_ridge():
  
         print "Training using feature map: %s" % (name)
         trained = clf.fit(x_train, y_train)
-        print clf.score(x_test, y_test)
+        print "score: %d" % (clf.score(x_test, y_test))
         predict = clf.predict(x_test)
         voxel_predictions[name] = predict
         best_params[name] = clf.best_params_
