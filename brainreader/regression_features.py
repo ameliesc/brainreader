@@ -49,22 +49,20 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
             
             input_im = np.concatenate((input_im, im2feat(stimuli_train[i])))
 
+        net = get_vgg_net(up_to_layer = 'fc8')
+        func = net.get_named_layer_activations.compile()
         feature_maps = OrderedDict()
-        for l_name in layer_names:
-            net = get_vgg_net(up_to_layer = l_name )
-            func = net.get_named_layer_activations.compile()
-            
-            print 'Convolving image up to %s' % (l_name)
-            named_features = func(input_im)
-            feat = named_features[l_name + '_layer']
+        print 'Convolving image up to %s' % (l_name)
+        named_features = func(input_im)
 
-            regr_x = np.reshape(feat, (sample_size, feat.shape[1] * feat.shape[2] * feat.shape[3]))
-            feature_maps[l_name] = regr_x
-            
+        for l_name in layer_names:
+
+            feat = named_features[l_name + '_layer']
+            regr_x = np.reshape(feat, (sample_size, feat.shape[1] * feat.shape[2] * feat.shape[3])
             print "Saving Feature maps to matlab file and pickle..."
+
             with open("train_%s.pickle" % (l_name), "wb") as output_file:
                 pickle.dump(regr_x, output_file)
-                
             savemat('train_%s.mat' % (l_name), {'regr_x': regr_x})
             print "Done"
         
