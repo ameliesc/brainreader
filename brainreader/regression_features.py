@@ -46,13 +46,13 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
         stim = im2feat(stimuli_train[0])
         input_im = stim
         for i in range(1, sample_size):
-            
+
             input_im = np.concatenate((input_im, im2feat(stimuli_train[i])))
 
         net = get_vgg_net(up_to_layer = 'fc8')
         func = net.get_named_layer_activations.compile()
         feature_maps = OrderedDict()
-        print 'Convolving image up to %s' % (l_name)
+        print 'Convolving images' 
         named_features = func(input_im)
 
         for l_name in layer_names:
