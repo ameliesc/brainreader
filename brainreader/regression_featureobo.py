@@ -23,7 +23,7 @@ cat
     return feature_map_im.astype(theano.config.floatX)
 
 
-def get_featuremaps(sample_size=120, layer_name=None, data_set='test'):
+def get_feature(sample_size=120, layer_name=None, data_set='test'):
 
     ### get data ###
     if data_set == 'train':
@@ -45,14 +45,8 @@ def get_featuremaps(sample_size=120, layer_name=None, data_set='test'):
 
         stim = im2feat(stimuli_train[0])
         input_im = stim
-        
-           
 
-        
         feature_maps = OrderedDict()
-
-        
-
         for l_name in layer_names:
             
             
@@ -72,13 +66,56 @@ def get_featuremaps(sample_size=120, layer_name=None, data_set='test'):
                 named_features = func(input_im)
                 feat = named_features[l_name + '_layer']
                 regr_x[0] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
-            print "Saving Feature maps to matlab file and pickle..."
+           # print "Saving Feature maps to matlab file and pickle..."
 
-            with open("train_%s.pickle" % (l_name), "wb") as output_file:
-                pickle.dump(regr_x, output_file)
-            savemat('train_%s.mat' % (l_name), {'regr_x': regr_x})
+            #with open("train_%s.pickle" % (l_name), "wb") as output_file:
+               # pickle.dump(regr_x, output_file)
+            feature_maps[l_name] = regr_x
             print "Done"
-        
+            return feature_maps
+
+def kernel_ridge():
+
+    feature_map_train = get_featuremaps(sample_size = 1750, data_set = 'train')
+    feature_map_test = get_featuremaps(sample_size = 120, data_set = 'test')
+    voxel_predictions = OrderedDict()
+    voxel_predictions[0] = 0
+    voxel_coef = OrderedDict()
+    voxel_coef[0] = 0
+    for name in layer_names:
+
+        regr_x = feature_map_train[name]
+        regr_x_test = feature_map_test[name]
+        n_samples = sample_size
+        n_features = regr_x.shape[1]
+        response_train = get_data(response = 1)
+        y_train = response_train[0:sample_size,:]
+        x_train = regr_x[:sample_size,:]
+    
+        response_test = get_data(response = 1, data = 'test')
+        y_test = response_test
+        x_test = regr_x_test
+        a = 2.5e-4
+        clf =  GridSearchCV(KernelRidge(alpha = a),cv=5,
+                   param_grid={"C": [1e0, 1e1, 1e2, 1e3, 1e-4, 2.5e-4],
+                               "gamma": np.logspace(-2, 2, 5)})
+ 
+
+
+        print "feature map: %s" % (name)
+        trained = clf.fit(x_train, y_train)
+        print clf.score(x_test, y_test)
+        predict = clf.predict(x_test)
+        voxel_predictions[name] = predict
+        voxel_coef[name] = clf.dual_coef_  
+
+    print "Saving coefficients"
+    with open("voxel_coefficients.pickle", "wb") as output_file:
+                pickle.dump(voxel_coef, output_file, protocol=pickle.HIGHEST_PROTOCOL )
+    print "Saving predictions"
+    with open("voxel_predictions.pickle", "wb") as output_file:
+                pickle.dump(voxel_predictions, output_file, protocol=pickle.HIGHEST_PROTOCOL)
+    return voxel_coef, voxel_predictions
 
 
 
