@@ -20,51 +20,56 @@ from regressiontheano import LinearRegressor
 from regression_features import get_featuremaps
 import cPickle as pickle
 
+
 def demo_brainreader(sample_size = 1750):
     ### get data ###
-    if layer_name == None:
-        with open(r"featuremaps_train.pickle", "rb") as input_file:
-            feature_map_train = cPickle.load(input_file)
-        with open(r"featuremaps_test.pickle", "rb") as input_file:
-            feature_map_test = cPickle.load(input_file)
-    else:
-        regr_x = get_featuremaps(sample_size,layer_name, data_set = 'train')
-        regr_x_test = get_featuremaps(sample_size, layer_name, data_set = 'test')
 
-    n_samples = sample_size
-    n_features = regr_x.shape[1]
-    y_train = response_train[0:sample_size,:]
-    x_train = regr_x[:sample_size,:]
+    layer_names = ['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2',
+                       'conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1',
+                       'conv4_2', 'conv4_3',  'conv4_4', 'conv5_1',
+                       'conv5_2',  'conv5_3',  'conv5_4',  'fc6',  'fc7',
+                       'fc8']
+
+    voxel_predictions = OrderedDict()
+    voxel_predictions[0] = 0
+    voxel_coef = OrderedDict()
+    voxel_coef[0] = 0
+    voxel_model = OrderedDict()
+    voxel_model[0] = 0:
     
-    response_test = get_data(response = 1, data = 'test')
 
-    y_test = response_test
-    x_test = regr_x_test
-    a = 2.5e-4
-    clf =  GridSearchCV(KernelRidge(alpha = a),cv=5,
+    for name in layer_names:
+
+        with open(r"train_%s.pickle" % (name), "rb") as input_file:
+            feature_map_train = cPickle.load(input_file)
+        with open(r"test_%s.pickle" % (name), "rb") as input_file:
+            feature_map_test = cPickle.load(input_file)
+
+        regr_x = feature_map_train
+        regr_x_test = feature_map_test
+        n_samples = sample_size
+        n_features = regr_x.shape[1]
+        response_train = get_data(response = 1)
+        y_train = response_train[0:sample_size,:]
+        x_train = regr_x[:sample_size,:]
+    
+        response_test = get_data(response = 1, data = 'test')
+        y_test = response_test
+        x_test = regr_x_test
+        a = 2.5e-4
+        clf =  GridSearchCV(KernelRidge(alpha = a),cv=5,
                    param_grid={"C": [1e0, 1e1, 1e2, 1e3, 1e-4, 2.5e-4],
                                "gamma": np.logspace(-2, 2, 5)})
+ 
 
-    if regression == 'ridge' and layer_name == None:
 
-        print "Ridge regression ..."    
-    # ## Ridge Regression ##
-        voxel_predictions = OrderedDict()
-        voxel_predictions[0] = 0
-        voxel_coef = OrderedDict()
-        voxel_coef[0] = 0
-        voxel_model = OrderedDict()
-        voxel_model[0] = 0
-        for name, feature_map in feature_map_train:
-            x_train = feature_map_train[name]
-            x_test = feature_map_test[name]
-            print "feature map: %s" % (name)
-            trained = clf.fit(x_train, y_train)
-            print clf.score(x_test, y_test)
-            voxel_model[i] = clf
-            predict = clf.predict(x_test)
-            voxel_predictions[name] = predict
-            voxel_coef[name] = clf.dual_coef_  #n_target, #n_features
+        print "feature map: %s" % (name)
+        trained = clf.fit(x_train, y_train)
+        print clf.score(x_test, y_test)
+        voxel_model[i] = clf
+        predict = clf.predict(x_test)
+        voxel_predictions[name] = predict
+        voxel_coef[name] = clf.dual_coef_  #n_target, #n_features
         return voxel_coef, voxel_predictions
 
    
