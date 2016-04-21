@@ -23,7 +23,7 @@ cat
     return feature_map_im.astype(theano.config.floatX)
 
 
-def get_feature(sample_size=120, layer_name=None, data_set='test'):
+def get_featuremaps(sample_size=120, layer_name=None, data_set='test'):
 
     ### get data ###
     if data_set == 'train':
