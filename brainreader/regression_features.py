@@ -58,7 +58,7 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
         for l_name in layer_names:
 
             feat = named_features[l_name + '_layer']
-            regr_x = np.reshape(feat, (sample_size, feat.shape[1] * feat.shape[2] * feat.shape[3])
+            regr_x = np.reshape(feat, (sample_size, feat.shape[1] * feat.shape[2] * feat.shape[3]))
             print "Saving Feature maps to matlab file and pickle..."
 
             with open("train_%s.pickle" % (l_name), "wb") as output_file:
