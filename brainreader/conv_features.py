@@ -72,8 +72,8 @@ def get_featuremaps(sample_size=120, layer_name=None, data_set='test'):
             print "Done."
 
             print "Saving feature_maps..."    
-            dd.io.save("featuremap_%s" % l_name,regr_x)
-        print "Done."
+            dd.io.save("featuremap_%s.h5" % l_name,regr_x)
+            print "Done."
         return feature_maps
 
 
