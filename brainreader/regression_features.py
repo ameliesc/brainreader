@@ -1,11 +1,12 @@
 from pretrained_networks import get_vgg_net
 from theano.gof.graph import Variable
 import numpy as np
-import theanofrom scipy.misc import imresize
+import theano
+from scipy.misc import imresize
 from data_preprocessing import get_data
 from collections import OrderedDict
 from scipy.io import loadmat, savemat
-
+import cPickle as pickle
 
 def im2feat(im):
     """
@@ -61,9 +62,14 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
             feature_maps[l_name] = regr_x
     
         print "Saving Feature maps to matlab file..."
+
+        
+        with open(r"featuremaps_%s.pickle" % (data_set), "wb") as outpus_file:
+            pickle.dump(feature_maps, output_file)
         savemat('feature_maps_%s.mat' % (data_set), {'feature_maps': feature_maps})
+
         print "Done"
-    #### Case just get one layer
+
     else:
         feat = np.squeeze(named_features[layer_name + '_layer'])
         # (1750, n_maps, size_y, size_x)

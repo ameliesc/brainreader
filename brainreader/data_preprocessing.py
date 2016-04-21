@@ -8,7 +8,7 @@ import h5py
 from scipy.misc import imresize
 
 
-def get_data(subject = 'S1', response = 0, data = "train", roi = 1):
+def get_data(subject = 'S1',  response = 0, data = "train", roi = 1):
     """input: subject = 'S1', stimuli = 1, response = 0, data = "train", roi = 1
     returns: stimulus and response if specified Returns the training or testing
     data set. Default returns training. For validation set type data= "test".
@@ -23,7 +23,7 @@ def get_data(subject = 'S1', response = 0, data = "train", roi = 1):
             indexes = np.where(roi_subject[0] == roi)[0]
             response_train = np.take(response_train, indexes, axis=1)
             response_train = response_train[:,~np.isnan(response_train).any(0)] #remove Nan 
-            return stim_train, response_train
+            return response_train
         else:
             return stim_train
     elif data == "test":
@@ -35,7 +35,7 @@ def get_data(subject = 'S1', response = 0, data = "train", roi = 1):
             indexes = np.where(roi_subject[0] == roi)[0]
             response_val = np.take(response_val, indexes, axis=1)
             response_val = response_val[:,~np.isnan(response_val).any(0)] #remove Nan 
-            return stim_val, response_val
+            return response_val
         else:
             return stim_val
     else:
