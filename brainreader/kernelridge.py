@@ -47,7 +47,7 @@ def kernel_ridge():
         a = 2.5e-4
         clf =  GridSearchCV(KernelRidge(alpha = a),cv=5,
                    param_grid={"C": [1e0, 1e1, 1e2, 1e3, 1e-4, 2.5e-4],
-                               "gamma": np.logspace(-2, 2, ,0.8, 5, -5)})
+                               "gamma": np.logspace(-2, 2, 0.8, 5, -5)})
  
         print "Training using feature map: %s" % (name)
         trained = clf.fit(x_train, y_train)
