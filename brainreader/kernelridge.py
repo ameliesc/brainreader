@@ -3,7 +3,7 @@ import h5py
 from data_preprocessing import get_data
 from collections import OrderedDict
 from sklearn.kernel_ridge import KernelRidge
-from sklearn.model_selection import GridSearchCV
+from sklearn.grid_search import GridSearchCV
 import deepdish as dd
 
 
