@@ -61,6 +61,7 @@ def get_featuremaps(sample_size=120, layer_name=None, data_set='test'):
             input_im =  im2feat(stimuli_train[0])
             named_features = func(input_im)
             feat = named_features[l_name + '_layer']
+            print feat.shape
             regr_x = np.empty((sample_size, feat.shape[1] * feat.shape[2] * feat.shape[3]))
             regr_x[0] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
 
