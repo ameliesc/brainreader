@@ -59,7 +59,7 @@ def get_featuremaps(sample_size=120, layer_name=None, data_set='test'):
             regr_x = np.empty((sample_size, feat.shape[1] * feat.shape[2] * feat.shape[3]))
             regr_x[0] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
 
-            print 'Convolving images up to layer %s' % (l_name)
+            print 'Convolving images up to layer ...%s' % (l_name)
             for i in range(1, sample_size):
 
                 input_im =  im2feat(stimuli_train[i])
@@ -71,8 +71,8 @@ def get_featuremaps(sample_size=120, layer_name=None, data_set='test'):
             #with open("train_%s.pickle" % (l_name), "wb") as output_file:
                # pickle.dump(regr_x, output_file)
             feature_maps[l_name] = regr_x
-            print "Done"
-            return feature_maps
+            print "Done."
+        return feature_maps
 
 def kernel_ridge():
     print "Getting feature maps for training..."
