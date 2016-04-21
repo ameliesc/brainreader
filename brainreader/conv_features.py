@@ -36,47 +36,40 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
     input_im[0] = im2feat(stimuli_train[0])
 
 
-    ####  Case get all layers 
-    if layer_name == None:
 
-        layer_names = ['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2',
-                       'conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1',
-                       'conv4_2', 'conv4_3',  'conv4_4', 'conv5_1',
-                       'conv5_2',  'conv5_3',  'conv5_4',  'fc6',  'fc7',
-                       'fc8']
+    layer_names = ['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2',
+                   'conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1',
+                   'conv4_2', 'conv4_3',  'conv4_4', 'conv5_1',
+                   'conv5_2',  'conv5_3',  'conv5_4',  'fc6',  'fc7',
+                   'fc8']
 
-        stim = im2feat(stimuli_train[0])
-        input_im = stim
+    stim = im2feat(stimuli_train[0])
+    input_im = stim
 
-        feature_maps = OrderedDict()
-        for l_name in layer_names:
+    feature_maps = OrderedDict()
+    for l_name in layer_names:
             
+        
+        net = get_vgg_net(up_to_layer = l_name)
+        func = net.get_named_layer_activations.compile()
+        input_im =  im2feat(stimuli_train[0])
+        named_features = func(input_im)
+        feat = named_features[l_name + '_layer']
+        regr_x = np.empty((sample_size, feat.shape[1] * feat.shape[2] * feat.shape[3]))
+        regr_x[0] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
+
+        print 'Convolving images up to layer %s ...' % (l_name)
+        for i in range(1, sample_size):
             
-            net = get_vgg_net(up_to_layer = l_name)
-            func = net.get_named_layer_activations.compile()
-            input_im =  im2feat(stimuli_train[0])
+            input_im =  im2feat(stimuli_train[i])
             named_features = func(input_im)
             feat = named_features[l_name + '_layer']
-            regr_x = np.empty((sample_size, feat.shape[1] * feat.shape[2] * feat.shape[3]))
             regr_x[0] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
 
-            print 'Convolving images up to layer %s ...' % (l_name)
-            for i in range(1, sample_size):
+        feature_maps[l_name] = regr_x
+        print "Done."
 
-                input_im =  im2feat(stimuli_train[i])
-                named_features = func(input_im)
-                feat = named_features[l_name + '_layer']
-                regr_x[0] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
-
-            feature_maps[l_name] = regr_x
-            print "Done."
-
-            print "Saving feature_maps..."
-            dd.io.save("featuremap_train_%s.h5" % (l_name), regr_x)
-            print "Done."
-        dd.io.save("feature_maps_train.h5", feature_maps)
-
-
-
-if __name__ == '__main__':
-   get_featuremaps()
+        print "Saving feature_maps..."
+        dd.io.save("featuremaps_test_%s.h5" % (name), regr_x)
+        print "Done."
+    return feature_maps
