@@ -55,14 +55,16 @@ def get_featuremaps(sample_size=120, layer_name=None, data_set='test'):
 
         for l_name in layer_names:
             
-            print 'Convolving images up to layer %s' % (l_name)
+            
             net = get_vgg_net(up_to_layer = l_name)
             func = net.get_named_layer_activations.compile()
             input_im =  im2feat(stimuli_train[0])
             named_features = func(input_im)
+            feat = named_features[l_name + '_layer']
             regr_x = np.empty((sample_size, feat.shape[1] * feat.shape[2] * feat.shape[3]))
             regr_x[0] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
-            
+
+            print 'Convolving images up to layer %s' % (l_name)
             for i in range(1, sample_size):
 
                 input_im =  im2feat(stimuli_train[i])
