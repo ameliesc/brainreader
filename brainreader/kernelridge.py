@@ -29,10 +29,12 @@ def kernel_ridge():
                    'fc8']
 
     for name in layer_names:
+
+        print "load featuremap for training.."
         feature_map_train = dd.io.load("featuremap_train_%s.h5" % (name))
+        print "load featuremap for testing.."
         feature_map_test = dd.io.load("featuremap_%s" % (name))
-        n_samples = sample_size
-        n_features = regr_x.shape[1]
+        print "Done."
         y_train = get_data(response = 1)
         x_train = feature_map_train
         y_test = get_data(response = 1, data = 'test')
@@ -40,7 +42,7 @@ def kernel_ridge():
         a = 2.5e-4
         clf =  GridSearchCV(KernelRidge(alpha = a),cv=5,
                    param_grid={"C": [1e0, 1e1, 1e2, 1e3, 1e-4, 2.5e-4],
-                               "gamma": np.logspace(-2, 2, 0.8, 5, -5)})
+                               "gamma": np.logspace(-2, 2, 5)})
  
         print "Training using feature map: %s" % (name)
         trained = clf.fit(x_train, y_train)
