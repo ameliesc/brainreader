@@ -22,6 +22,12 @@ def kernel_ridge():
     voxel_coef[0] = 0
     best_params = OrderedDict()
     best_params[0] = 0
+    layer_names = ['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2',
+                   'conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1',
+                   'conv4_2', 'conv4_3',  'conv4_4', 'conv5_1',
+                   'conv5_2',  'conv5_3',  'conv5_4',  'fc6',  'fc7',
+                   'fc8']
+
     for name in layer_names:
         feature_map_train = dd.io.load("featurmap_train_%s" % (name))
         feature_map_test = dd.io.load("featuremap_%s" % (name))
