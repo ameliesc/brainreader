@@ -29,7 +29,7 @@ def kernel_ridge():
                    'fc8']
 
     for name in layer_names:
-        feature_map_train = dd.io.load("featurmap_train_%s" % (name))
+        feature_map_train = dd.io.load("featuremap_train_%s" % (name))
         feature_map_test = dd.io.load("featuremap_%s" % (name))
         n_samples = sample_size
         n_features = regr_x.shape[1]
