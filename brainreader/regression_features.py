@@ -23,7 +23,7 @@ cat
     return feature_map_im.astype(theano.config.floatX)
 
 
-def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
+def get_featuremaps(sample_size=120, layer_name=None, data_set='test'):
 
     ### get data ###
     if data_set == 'train':
@@ -69,19 +69,22 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
 
 
 
-    else:
-        feat = np.squeeze(named_features[layer_name + '_layer'])
-        # (1750, n_maps, size_y, size_x)
-        regr_x = np.empty(
-            (sample_size, feat.shape[0] * feat.shape[1] * feat.shape[2]))
-        regr_x[0] = np.reshape(
-            feat, (feat.shape[0] * feat.shape[1] * feat.shape[2]))
-        for i in range(1, sample_size):
-            input_im[0] = im2feat(stimuli_train[i])
-            named_features = func(input_im)
-            feat = np.squeeze(named_features[layer_name + '_layer'])
-            regr_x[i] = np.reshape(
-                feat, (feat.shape[0] * feat.shape[1] * feat.shape[2]))
-        feature_maps = regr_x
-    print 'Finished.'
+    # else:
+    #     feat = np.squeeze(named_features[layer_name + '_layer'])
+    #     # (1750, n_maps, size_y, size_x)
+    #     regr_x = np.empty(
+    #         (sample_size, feat.shape[0] * feat.shape[1] * feat.shape[2]))
+    #     regr_x[0] = np.reshape(
+    #         feat, (feat.shape[0] * feat.shape[1] * feat.shape[2]))
+    #     for i in range(1, sample_size):
+    #         input_im[0] = im2feat(stimuli_train[i])
+    #         named_features = func(input_im)
+    #         feat = np.squeeze(named_features[layer_name + '_layer'])
+    #         regr_x[i] = np.reshape(
+    #             feat, (feat.shape[0] * feat.shape[1] * feat.shape[2]))
+    #     feature_maps = regr_x
+    # print 'Finished.'
     return feature_maps
+
+if __name__ == '__main__':
+   get_featuremaps()
