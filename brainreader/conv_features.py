@@ -46,9 +46,9 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
     stim = im2feat(stimuli_train[0])
     input_im = stim
 
-    feature_maps = OrderedDict()
+    
     for l_name in layer_names:
-            
+
         
         net = get_vgg_net(up_to_layer = l_name)
         func = net.get_named_layer_activations.compile()
@@ -66,10 +66,9 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
             feat = named_features[l_name + '_layer']
             regr_x[0] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
 
-        feature_maps[l_name] = regr_x
         print "Done."
 
         print "Saving feature_maps..."
-        savemat("featuremaps_test_%s.mat" % (l_name), {'%s' % (l_name) : regr_x })
+        dd.io.save("featuremaps_test_%s.mat" % (l_name),  regr_x)
         print "Done."
     return feature_maps
