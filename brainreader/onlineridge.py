@@ -32,27 +32,29 @@ def online_ridge():
         n_test_samples = x_test.shape[0]
         i = 0
         score_report_period = 200
-        n_epochs = 2
-
-        lmbda_list = [0, 2.7580e-25, 2.7198e-13, 6.5068e-08, 7.2153e+18, 6.8359e+22, 1.5407e+47, 4.5480e+51, 9.8656e+53, 7.9408e+58]
+        n_epochs = 1
+#0 2.7580e-25, 2.7198e-13, 6.5068e-08, 7.2153e+18,6.8359e+22,[   1.5407e+47, 4.5480e+51, 9.8656e+53, 7.9408e+58]
+        lmbda_list = [0.001]
         for l in lmbda_list:
 
-            predictor = LinearRegressor(n_in, n_out, lmbda = l)
+            predictor = LinearRegressor(n_in, n_out, lmbda = l, eta = 0.00000000000000000000000000000000000000000000000001)
             f_train = predictor.train.compile()
             f_predict = predictor.predict.compile()
             f_cost = predictor.cost.compile()
-            
             # Train on one sample at a time and periodically report score.
-            for i in xrange(n_training_samples*n_epochs+1):
-                if i % score_report_period == 0:
-                    out = f_predict(x_test)
-                    test_cost = ((y_test-out)**2).sum(axis=1).mean(axis=0)
-                    print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
-            f_train(x_train[[i % n_training_samples]], y_train[[i % n_training_samples]])
-            
-            pred =  f_predict(x_test)
-            
-            print f_cost(x_test,y_test) 
-            return pred,  predictor.coef_, y_test  # return values for testing cost function in commandline
+            for i in xrange(n_training_samples*n_epochs+1):#
+                #if i % score_report_period == 0:
+                out = f_predict(x_test)
+                w = predictor.coef_()
+                w = w.get_value()
+                test_cost = ((y_test - out)**2).sum(axis = 1).mean(axis=0) 
+                print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
+                if np.isnan(test_cost):
+                    return w
+                f_train(x_train[[i % n_training_samples]], y_train[[i % n_training_samples]])
+                grad = f_cost(x_test,y_test)
+            return w
+            #print f_cost(x_test,y_test) 
+            #return f_cost(x_test, y_test) # return values for testing cost function in commandline
                 #print "Cost train: %d" % (f_cost(x_train, y_train[:,i:i+10]))
                 #print "Cost test: %d" % (f_cost(x_test,y_test[:,i:i+10]))
