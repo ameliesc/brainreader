@@ -52,7 +52,6 @@ def online_ridge():
                 if np.isnan(test_cost):
                     return w
                 f_train(x_train[[i % n_training_samples]], y_train[[i % n_training_samples]])
-                grad = f_cost(x_test,y_test)
             return w
             #print f_cost(x_test,y_test) 
             #return f_cost(x_test, y_test) # return values for testing cost function in commandline
