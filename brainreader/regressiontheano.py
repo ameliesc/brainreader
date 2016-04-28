@@ -1,17 +1,18 @@
 from plato.core import create_shared_variable, symbolic, add_update
 import theano.tensor as tt
+import theano as t
 import numpy as np
 
 class LinearRegressor:
 
     def __init__(self, n_in, n_out, lmbda, eta= 0.01, w = None):
         if w is not None:
-            self.w = create_shared_variable(w)
+            self.w = t.shared(w)
         else:
-            self.w = create_shared_variable(np.zeros((n_in, n_out)))
+            self.w = t.shared(np.zeros((n_in, n_out)))
         self.lmbda = lmbda
         self.cost = None
-        self.eta = create_shared_variable(eta)
+        self.eta = t.shared(eta)
 
     @symbolic
     def set_params(self,roh=1, alpha =1, eta = None, w = None):
