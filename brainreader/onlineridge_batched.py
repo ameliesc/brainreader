@@ -1,5 +1,4 @@
 import numpy as np
-import h5py
 from data_preprocessing import get_data
 from collections import OrderedDict
 import deepdish as dd
@@ -9,8 +8,8 @@ def online_ridge():
 
     #['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2',
     #'conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1','conv4_2', 'conv4_3',  'conv4_4', 'conv5_1',
-                 #  'conv5_2',  'conv5_3',   'conv5_4'
-    layer_names = ['fc6', 'fc7','fc8']
+                 #  'conv5_2',  'conv5_3',   'conv5_4', 'fc6',
+    layer_names = [ 'conv5_2',  'conv5_3',   'conv5_4', 'fc6', 'fc7','fc8']
 
     regr_coef  = OrderedDict()
     regr_cost = OrderedDict()
@@ -34,7 +33,7 @@ def online_ridge():
         score_report_period = 400
         n_epochs = 10
         lmbda = 0.01
-        cots_voxel = np.zeros_like(y_test)
+        cost_voxel = np.zeros_like(y_test)
         weights_voxel = np.zeros((x_train.shape[1],y_train.shape[1]))
         j = 0
         while j < y_train.shape[1]:
@@ -42,7 +41,6 @@ def online_ridge():
             predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = 0.01 )
             f_train = predictor.train.compile()
             f_predict = predictor.predict.compile()
-            set_params = predictor.set_params.compile()
             f_cost = predictor.voxel_cost.compile()
             # Train on one sample at a time and periodically report score.
             epoch = 0
@@ -54,58 +52,66 @@ def online_ridge():
             while i < n_training_samples*n_epochs+1:
                 out = f_predict(x_test)
                 test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0) 
-                #skip NaN reslts
-                if np.isnan(test_cost) or np.isinf(test_cost):
-                    print "Cost nan or inf resetting parameters."
-                    predictor.set_params(alpha=alpha, w = w_old)
-                    i = 0
-                    epoch = 0
-                    eta = predictor.get_params()
-                    eta = eta.get_value()
-                    print "new step size: %s" % (eta)
-                    continue
-                    
+
                 if i % score_report_period == 0:
                     print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
                     
+                if np.isnan(test_cost) or np.isinf(test_cost):
+                    print "Cost nan or inf (%s) resetting parameters." % (test_cost)
+                    i = 0
+                    
+                    eta = predictor.get_params()
+                    eta = eta * 0.5
+                    predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old )
+                    f_train = predictor.train.compile()
+                    f_predict = predictor.predict.compile()
+                    f_cost = predictor.voxel_cost.compile()
+                    print "new step size: %s" % (eta)
+                    continue
+            
+
                 if i == epoch: # Adaptive Stepsize
  
-                    if test_cost_old < test_cost or test_cost_old == test_cost: 
+                    if test_cost_old < test_cost:
+                        print "Cost too high (%s))" % (test_cost)
+                        eta = predictor.get_params()
+                        eta = 0.5 * eta
+                        predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old )
+                        f_train = predictor.train.compile()
+                        f_predict = predictor.predict.compile()
+                        f_cost = predictor.voxel_cost.compile()
+                        print "Decreasing  learning rate: %s" % (eta)
+                    
 
-                        print "Cost too high resetting parameters."
-                        eta = predictor.get_params()
-                        eta = eta.get_value()
-                        predictor.set_params(alpha=alpha, roh = 1, eta = eta, w = w_old)
-                        eta = predictor.get_params()
-                        eta = eta.get_value()
-                        print "new step size: %s" % (eta)
-
-                    elif test_cost_old > test_cost :
-                        eta = predictor.get_params()
-                        eta = eta.get_value()
-                        predictor.set_params(roh = roh, alpha = 1, eta = eta)
-                        eta = predictor.get_params()
-                        eta = eta.get_value()
-                        print "Increasing learning rate to : %s" % (eta)
-                        
                     elif np.isnan(test_cost) or np.isinf(test_cost):
-                        print "Cost nan or inf resetting parameters."
+                        print "Cost (%s) resetting parameters." % (test_cost)
                         eta = predictor.get_params()
-                        eta = eta.get_value()
-                        predictor.set_params(alpha=alpha, roh = 1, eta = eta, w = w_old)
-                        eta = predictor.get_params()
-                        eta = eta.get_value()
-                        print "new step size: %s" % (eta)
-
+                        eta = 0.5*eta
+                        predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old )
+                        f_train = predictor.train.compile()
+                        f_predict = predictor.predict.compile()
+                        f_cost = predictor.voxel_cost.compile()
+                        print "Decreasing learning rate: %s" % (eta)
                         i = 0
-                        epoch = 0
+                        
 
-                test_cost_old = test_cost
-                w = predictor.coef_()
-                w_old = w.get_value()
-                epoch += n_training_samples
+                    elif test_cost_old > test_cost or test_cost_old == test_cost:
+                        eta = predictor.get_params()
+                        eta_old = eta
+                        eta = 1.1 * eta
+                        predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old )
+                        f_train = predictor.train.compile()
+                        f_predict = predictor.predict.compile()
+                        f_cost = predictor.voxel_cost.compile()
+                        print "Increasing learning rate from %s to  %s" % (eta_old, eta)
+
+                    test_cost_old = test_cost
+                    w = predictor.coef_()
+                    w_old = w.get_value()
+                    epoch += n_training_samples
                 f_train(x_train[[i % n_training_samples]], y_train[i % n_training_samples, j: j+batch_size])
                 i += 1
+                
             cost_batch = f_cost(x_test, y_test[:,j:j+batch_size])
             cost_voxel[:,j:j+batch_size] =cost_batch
             w = predictor.coef_()
