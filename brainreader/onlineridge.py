@@ -33,7 +33,7 @@ def online_ridge():
         n_test_samples = x_test.shape[0]
         i = 0
         score_report_period = 400
-        n_epochs = 2
+        n_epochs = 10
         lmbda = 0.01
 
         predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = 0.01 )
@@ -91,7 +91,7 @@ def online_ridge():
                     eta = predictor.get_params()
                     eta = eta.get_value()
                     predictor.set_params(roh = roh, eta = eta)
-                    print "Current learning rate: %s" % (eta)
+                    print "Increasing learning rate to : %s" % (eta)
                         
                 else:
                     print "Cost nan or inf resetting parameters."
