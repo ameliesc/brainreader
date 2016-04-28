@@ -50,17 +50,12 @@ def online_ridge():
             roh = 1.1
             alpha = 0.5
             w_old = None
-        
             i = 0
             while i < n_training_samples*n_epochs+1:
                 out = f_predict(x_test)
                 test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0) 
                 #skip NaN reslts
-                if test_cost_old < test_cost:
-                    test_cost = test_cost
-                elif test_cost_old > test_cost or test_cost_old == test_cost:
-                    test_cost = test_cost
-                else:
+                if np.isnan(test_cost) or np.isinf(test_cost):
                     print "Cost nan or inf resetting parameters."
                     predictor.set_params(alpha=alpha, w = w_old)
                     i = 0
@@ -68,13 +63,14 @@ def online_ridge():
                     eta = predictor.get_params()
                     eta = eta.get_value()
                     print "new step size: %s" % (eta)
+                    continue
                     
                 if i % score_report_period == 0:
                     print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
-
+                    
                 if i == epoch: # Adaptive Stepsize
  
-                    if test_cost_old < test_cost:
+                    if test_cost_old < test_cost or test_cost_old == test_cost: 
 
                         print "Cost too high resetting parameters."
                         eta = predictor.get_params()
@@ -83,9 +79,8 @@ def online_ridge():
                         eta = predictor.get_params()
                         eta = eta.get_value()
                         print "new step size: %s" % (eta)
-                        #set_params(alpha = alpha)
 
-                    elif test_cost_old > test_cost or test_cost_old == test_cost:
+                    elif test_cost_old > test_cost :
                         eta = predictor.get_params()
                         eta = eta.get_value()
                         predictor.set_params(roh = roh, alpha = 1, eta = eta)
@@ -93,7 +88,7 @@ def online_ridge():
                         eta = eta.get_value()
                         print "Increasing learning rate to : %s" % (eta)
                         
-                    else:
+                    elif np.isnan(test_cost) or np.isinf(test_cost):
                         print "Cost nan or inf resetting parameters."
                         eta = predictor.get_params()
                         eta = eta.get_value()
@@ -105,12 +100,12 @@ def online_ridge():
                         i = 0
                         epoch = 0
 
-                    test_cost_old = test_cost
-                    w = predictor.coef_()
-                    w_old = w.get_value()
-                    epoch += n_training_samples
-                    f_train(x_train[[i % n_training_samples]], y_train[i % n_training_samples, j: j+batch_size])
-                    i += 1
+                test_cost_old = test_cost
+                w = predictor.coef_()
+                w_old = w.get_value()
+                epoch += n_training_samples
+                f_train(x_train[[i % n_training_samples]], y_train[i % n_training_samples, j: j+batch_size])
+                i += 1
             cost_batch = f_cost(x_test, y_test[:,j:j+batch_size])
             cost_voxel[:,j:j+batch_size] =cost_batch
             w = predictor.coef_()
