@@ -8,7 +8,6 @@ def online_ridge():
 
     #['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2',
     #'conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1','conv4_2', 'conv4_3',  'conv4_4', 'conv5_1',
-                 #  'conv5_2',  'conv5_3',   'conv5_4', 'fc6',
     layer_names = [ 'conv5_2',  'conv5_3',   'conv5_4', 'fc6', 'fc7','fc8']
 
     regr_coef  = OrderedDict()
@@ -25,30 +24,40 @@ def online_ridge():
         x_train = feature_map_train
         y_test = get_data(response=1, data='test', roi = 3 )  # n_samples x n_targets
         x_test = feature_map_test  # n_samples x n_feature
-        batch_size = 10
+        batch_size = 2
         n_in = x_train.shape[1]
         n_out = batch_size
+        print n_in
+        print n_out
+        print x_train.shape
+        print y_train.shape
         n_training_samples = x_train.shape[0]
         n_test_samples = x_test.shape[0]
         score_report_period = 400
-        n_epochs = 10
+        n_epochs = 100
         lmbda = 0.01
         cost_voxel = np.zeros_like(y_test)
         weights_voxel = np.zeros((x_train.shape[1],y_train.shape[1]))
         j = 0
+        last_inf_eta = 0
         while j < y_train.shape[1]:
-            print "training batch "
+            print "training batch %s" % (j / batch_size)
+            if y_train.shape[1] - j < batch_size:
+                n_out = y_train.shape[1] - j
+                print "looop"
+            eta = last_inf_eta
             predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = 0.01 )
             f_train = predictor.train.compile()
             f_predict = predictor.predict.compile()
             f_cost = predictor.voxel_cost.compile()
             # Train on one sample at a time and periodically report score.
             epoch = 0
-            test_cost_old = 0
+            test_cost_old = 500
             roh = 1.1
             alpha = 0.5
             w_old = None
             i = 0
+            
             while i < n_training_samples*n_epochs+1:
                 out = f_predict(x_test)
                 test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0) 
@@ -57,7 +66,7 @@ def online_ridge():
                     print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
                     
                 if np.isnan(test_cost) or np.isinf(test_cost):
-                    print "Cost nan or inf (%s) resetting parameters." % (test_cost)
+                    print "Cost (%s) resetting parameters." % (test_cost)
                     i = 0
                     
                     eta = predictor.get_params()
@@ -66,6 +75,7 @@ def online_ridge():
                     f_train = predictor.train.compile()
                     f_predict = predictor.predict.compile()
                     f_cost = predictor.voxel_cost.compile()
+                    last_inf_eta = eta
                     print "new step size: %s" % (eta)
                     continue
             
@@ -73,14 +83,14 @@ def online_ridge():
                 if i == epoch: # Adaptive Stepsize
  
                     if test_cost_old < test_cost:
-                        print "Cost too high (%s))" % (test_cost)
+                        print "Cost too high (%s)" % (test_cost)
                         eta = predictor.get_params()
                         eta = 0.5 * eta
                         predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old )
                         f_train = predictor.train.compile()
                         f_predict = predictor.predict.compile()
                         f_cost = predictor.voxel_cost.compile()
-                        print "Decreasing  learning rate: %s" % (eta)
+                        print "Decreasing  learning rate to %s" % (eta)
                     
 
                     elif np.isnan(test_cost) or np.isinf(test_cost):
@@ -105,6 +115,17 @@ def online_ridge():
                         f_cost = predictor.voxel_cost.compile()
                         print "Increasing learning rate from %s to  %s" % (eta_old, eta)
 
+                    if abs(test_cost_old - test_cost) < eta * 0.001 and epoch > 5 * n_training_samples : # stopping condition
+                        i = n_training_samples*n_epochs+1
+
+                    elif abs(test_cost_old - test_cost) < eta * 0.001 and epoch < 5 * n_training_samples :  
+                        predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = 1 )  # random initialisation, might be stuck in local minimum
+                        f_train = predictor.train.compile()
+                        f_predict = predictor.predict.compile()
+                        f_cost = predictor.voxel_cost.compile()
+
+                    
+                    
                     test_cost_old = test_cost
                     w = predictor.coef_()
                     w_old = w.get_value()
@@ -122,9 +143,6 @@ def online_ridge():
         regr_cost[name] = cost_voxel
         regr_coef[name] = weights_voxel
             
-    dd.io.save("regression_coefficients_roi3_fc.h5", regr_coef)
-    dd.io.save("regression_cost_roi3_fc.h5", regr_cost)
-            #print f_cost(x_test,y_test) 
-            #return f_cost(x_test, y_test) # return values for testing cost function in commandline
-                #print "Cost train: %d" % (f_cost(x_train, y_train[:,i:i+10]))
-                #print "Cost test: %d" % (f_cost(x_test,y_test[:,i:i+10]))
+        dd.io.save("regression_coefficients_roi3_%s.h5" % (name), weights_voxel)
+        dd.io.save("regression_cost_roi3_%s.h5" % (name), cost_voxel)
+

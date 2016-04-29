@@ -9,8 +9,8 @@ def online_ridge():
 
     #['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2',
     #'conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1','conv4_2', 'conv4_3',  'conv4_4', 'conv5_1',
-                 #  'conv5_2',  'conv5_3',   'conv5_4'
-    layer_names = ['fc6', 'fc7','fc8']
+                 #  'conv5_2',  'conv5_3',   'conv5_4', 'fc6',
+    layer_names = [ 'fc7','fc8']
 
     regr_coef  = OrderedDict()
     regr_cost = OrderedDict()
@@ -22,18 +22,21 @@ def online_ridge():
         feature_map_test = dd.io.load("featuremaps_test_%s.h5" % (name))
         print "Done."
 
-        y_train = get_data(response=1)
-        x_train = feature_map_train
-        y_test = get_data(response=1, data='test')  # n_samples x n_targets
+        roi = 4
+        y_train = get_data(response=1, roi = roi)
+        x_train = feature_map_train       
         x_test = feature_map_test  # n_samples x n_feature
+        y_test = get_data(response=1, data='test', roi = roi)  # n_samples x n_targets
+        y_test = y_test[:,0:y_train.shape[1]] #test dimensions not always the same, due to discarded nan voxels
         batch_size = 100
         n_in = x_train.shape[1]
         n_out = y_train.shape[1]
+
         n_training_samples = x_train.shape[0]
         n_test_samples = x_test.shape[0]
         i = 0
         score_report_period = 400
-        n_epochs = 10
+        n_epochs = 2
         lmbda = 0.01
 
         predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = 0.01 )
@@ -55,7 +58,6 @@ def online_ridge():
             if np.isnan(test_cost) or np.isinf(test_cost):
                 print "Cost nan or inf (%s) resetting parameters." % (test_cost)
                 i = 0
-                epoch = 0
                 eta = predictor.get_params()
                 eta = eta * 0.5
                 predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old )
@@ -89,7 +91,6 @@ def online_ridge():
                     f_cost = predictor.voxel_cost.compile()
                     print "Decreasing learning rate: %s" % (eta)
                     i = 0
-                    epoch = 0
 
                 elif test_cost_old > test_cost or test_cost_old == test_cost:
                     eta = predictor.get_params()
@@ -121,8 +122,8 @@ def online_ridge():
         regr_cost["name"] = cost_voxel
         regr_coef["name"] =  w_old
             
-    dd.io.save("regression_coefficients_fc.h5", regr_coef)
-    dd.io.save("regression_cost_fc.h5", regr_cost)
+    dd.io.save("regression_coefficients_roi%s_%s.h5" % (roi,name), regr_coef)
+    dd.io.save("regression_cost_roi%s_%s.h5" % (roi,name), regr_cost)
             #print f_cost(x_test,y_test) 
             #return f_cost(x_test, y_test) # return values for testing cost function in commandline
                 #print "Cost train: %d" % (f_cost(x_train, y_train[:,i:i+10]))
