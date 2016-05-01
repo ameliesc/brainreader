@@ -45,30 +45,34 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
 
     stim = im2feat(stimuli_train[0])
     input_im = stim
-
-    
-    for l_name in layer_names:
-
+    batch = 350
+    sample_size = batch
+    n = 0
+    while n < 5:
+        sample_size_end = n * batch + batch
         
-        net = get_vgg_net(up_to_layer = l_name)
-        func = net.get_named_layer_activations.compile()
-        input_im =  im2feat(stimuli_train[0])
-        named_features = func(input_im)
-        feat = named_features[l_name + '_layer']
-        regr_x = np.empty((sample_size, feat.shape[1] * feat.shape[2] * feat.shape[3]))
-        regr_x[0] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
-
-        print 'Convolving images up to layer %s ...' % (l_name)
-        for i in range(1, sample_size):
-            
-            input_im =  im2feat(stimuli_train[i])
+        for l_name in layer_names:
+        
+        
+            net = get_vgg_net(up_to_layer = l_name)
+            func = net.get_named_layer_activations.compile()
+            input_im =  im2feat(stimuli_train[0])
             named_features = func(input_im)
             feat = named_features[l_name + '_layer']
-            regr_x[i] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
+            regr_x = np.empty((sample_size, feat.shape[1] * feat.shape[2] * feat.shape[3]))
+            regr_x[0] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
 
-        print "Done."
+            print 'Convolving images up to layer %s ...' % (l_name)
+            for i in range(n * batch, sample_size_end):
+            
+                input_im =  im2feat(stimuli_train[i])
+                named_features = func(input_im)
+                feat = named_features[l_name + '_layer']
+                regr_x[i] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
+
+                print "Done."
 
         print "Saving feature_maps..."
-        dd.io.save("featuremaps_train_%s.h5" % (l_name),  regr_x)
+        dd.io.save("featuremaps_train_%s %s.h5" % (batch,l_name),  regr_x)
         print "Done."
-    return feature_maps
+
