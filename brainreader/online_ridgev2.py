@@ -6,8 +6,8 @@ from regressionridgev2 import LinearRegressor
 
 def online_ridge():
 
-    # ['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2','conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1','conv4_2', 'conv4_3',  'conv4_4',
-    layer_names = [ 'conv5_1','conv5_2',  'conv5_3', 'conv5_4', 'conv5_4', 'fc6', 'fc7','fc8']
+    # ['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2','conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1','conv4_2', 'conv4_3',  'conv4_4','conv5_1','conv5_2',  'conv5_3',, 'conv5_4', 'fc6', 'fc7','fc8'
+    layer_names = [  'conv5_4']
 
     regr_coef  = OrderedDict()
     regr_cost = OrderedDict()
@@ -27,13 +27,13 @@ def online_ridge():
         x_test = np.nan_to_num((feature_map_test-np.mean(feature_map_test, axis=1)[:, None])/np.std(feature_map_test, axis=1)[:, None])
         
  # n_samples x n_feature
-        batch_size = 1
+        batch_size = 100
         n_in = x_train.shape[1]
         n_out = batch_size
         n_training_samples = x_train.shape[0]
         n_test_samples = x_test.shape[0]
-        score_report_period = 1000
-        n_epochs = 1000
+        score_report_period = 500
+        n_epochs = 100
         lmbda = 0.01
         cost_voxel = np.zeros_like(y_test)
         weights_voxel = np.zeros((x_train.shape[1],y_train.shape[1]))
@@ -97,6 +97,5 @@ def online_ridge():
         regr_coef[name] = weights_voxel
         dd.io.save("regression_coefficients_roi6_%s.h5" % (name), weights_voxel)
         dd.io.save("regression_cost_roi6_%s.h5" % (name), cost_voxel)
-    dd.io.save("regression_all_coef_roi6.h5", regr_coef)
-    dd.io.save("regression_all_cost_roi6.h5", regr_cost)
+
 
