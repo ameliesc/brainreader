@@ -1,11 +1,7 @@
 import numpy as np
 from scipy.io import loadmat
-from matplotlib import pyplot as plt
-from brainreader.pretrained_networks import get_vgg_net
-from plotting.data_conversion import put_data_in_grid
-from sklearn import linear_model
+from pretrained_networks import get_vgg_net
 import h5py
-from scipy.misc import imresize
 
 
 def get_data(subject = 'S1',  response = 0, data = "train", roi = 1):

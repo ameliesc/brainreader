@@ -54,7 +54,7 @@ def online_ridge():
             f_predict = predictor.predict.compile()
             f_cost = predictor.voxel_cost.compile()
             i = 0
-            for i in xrange(0,_training_samples*n_epochs+1):
+            for i in xrange(0,n_training_samples*n_epochs+1):
                 if i % score_report_period == 0:
                     out = f_predict(x_test)
                     test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
