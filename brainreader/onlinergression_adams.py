@@ -1,25 +1,20 @@
 from plato.core import create_shared_variable, symbolic, add_update
 import theano.tensor as tt
 import numpy as np
+import theano
 
 class LinearRegressor:
 
-    def __init__(self, n_in, n_out, lmbda):
-        self.w = create_shared_variable(np.zeros((n_in, n_out)))
+    def __init__(self, n_in, n_out, lmbda, alpha = 0.001):
+        self.w = theano.shared(np.zeros((n_in, n_out)))
         self.lmbda = lmbda
         self.eta = 1e-8
-        self.alpha = creat_shared_variable(0.001)
-        self.m_v1 = create_shared_variable(np.zeros((n_in,n_out)))
-        self.v_v2 = create_shared_variable(np.zeros((n_in,n_out)))
+        self.alpha = alpha
+        self.m_v1 = theano.shared(np.zeros((n_in,n_out)))
+        self.v_v2 = theano.shared(np.zeros((n_in,n_out)))
         self.beta1 = 0.9
         self.beta2 = 0.999
         self.t = 0
-
-    @symbolic
-    def set_params(self):
-        self.alpha = self.alpha * 0.5
-
-
         
         
     @symbolic

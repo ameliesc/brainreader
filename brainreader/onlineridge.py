@@ -22,13 +22,13 @@ def online_ridge():
         feature_map_test = dd.io.load("featuremaps_test_%s.h5" % (name))
         print "Done."
 
-        roi = 4
+        roi = 3
         y_train = get_data(response=1, roi = roi)
         x_train = feature_map_train       
         x_test = feature_map_test  # n_samples x n_feature
         y_test = get_data(response=1, data='test', roi = roi)  # n_samples x n_targets
         y_test = y_test[:,0:y_train.shape[1]] #test dimensions not always the same, due to discarded nan voxels
-        batch_size = 100
+        batch_size = 2
         n_in = x_train.shape[1]
         n_out = y_train.shape[1]
 
@@ -85,10 +85,12 @@ def online_ridge():
                     print "Cost nan or inf (%s) resetting parameters." % (test_cost)
                     eta = predictor.get_params()
                     eta = 0.5*eta
+                    
                     predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old )
                     f_train = predictor.train.compile()
                     f_predict = predictor.predict.compile()
                     f_cost = predictor.voxel_cost.compile()
+                    
                     print "Decreasing learning rate: %s" % (eta)
                     i = 0
 

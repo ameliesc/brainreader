@@ -32,41 +32,40 @@ def online_ridge():
         n_training_samples = x_train.shape[0]
         n_test_samples = x_test.shape[0]
         score_report_period = 400
-        n_epochs = 10
-        lmbda = 0.01
+        n_epochs = 100
+        lmbda = 0.001
         cost_voxel = np.zeros_like(y_test)
         weights_voxel = np.zeros((x_train.shape[1],y_train.shape[1]))
         j = 0
 
-        print "training batch "
-        predictor = LinearRegressor(n_in, n_out, lmbda = lmbda)
-        f_train = predictor.train.compile()
-        f_predict = predictor.predict.compile()
-        f_cost = predictor.voxel_cost.compile()
-        predictor.set_params.compile()
+        
         # Train on one sample at a time and periodically report score.
   
         w_old = None
         j = 0
         while j < y_train.shape[1]:
-
+            print "training batch "
+            predictor = LinearRegressor(n_in, n_out, lmbda = lmbda)
+            f_train = predictor.train.compile()
+            f_predict = predictor.predict.compile()
+            f_cost = predictor.voxel_cost.compile()
             test_cost_old = 0
+            
             for i in xrange(0, n_training_samples*n_epochs+1):
                 
                 out = f_predict(x_test)
                 test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
                     
-                if test_cost_old < test_cost:
-                    test_cost = test_cost
-                elif test_cost_old > test_cost or test_cost_old == test_cost:
-                    test_cost = test_cost
-                else:
+                if np.isnan(test_cost) or np.isinf(test_cost):
                     print "Cost nan or inf resetting parameters."
-                    predictor.set_params()
-                    i = 0
-                    epoch = 0
-                    eta = predictor.get_params()
-                    print "new step size: %s" % (eta)
+                    alpha = predictor.get_params()
+                    alphe = 0.5 * alpha
+                    predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, alpha = alpha)
+                    f_train = predictor.train.compile()
+                    f_predict = predictor.predict.compile()
+                    f_cost = predictor.voxel_cost.compile()
+                    print "new step size: %s" % (alpha)
+                    continue
 
                 if i % score_report_period == 0:
                     print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)

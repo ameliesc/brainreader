@@ -7,8 +7,8 @@ from regressiontheano import LinearRegressor
 def online_ridge():
 
     #['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2',
-    #'conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1','conv4_2', 'conv4_3',  'conv4_4', 
-    layer_names = [ 'conv5_1','conv5_2',  'conv5_3',   'conv5_4', 'fc6', 'fc7','fc8']
+    #'conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1','conv4_2', 'conv4_3',  'conv4_4', 'conv5_1','conv5_2',  'conv5_3',   'conv5_4',
+    layer_names = [  'fc6', 'fc7','fc8']
 
     regr_coef  = OrderedDict()
     regr_cost = OrderedDict()
@@ -20,11 +20,11 @@ def online_ridge():
         feature_map_test = dd.io.load("featuremaps_test_%s.h5" % (name))
         print "Done."
 
-        y_train = get_data(response=1, roi = 3)
+        y_train = get_data(response=1, roi = 4)
         x_train = feature_map_train
-        y_test = get_data(response=1, data='test', roi = 3 )  # n_samples x n_targets
+        y_test = get_data(response=1, data='test', roi = 4 )  # n_samples x n_targets
         x_test = feature_map_test  # n_samples x n_feature
-        batch_size = 10
+        batch_size = 20
         n_in = x_train.shape[1]
         n_out = batch_size
         n_training_samples = x_train.shape[0]
@@ -67,7 +67,7 @@ def online_ridge():
                     
                     eta = predictor.get_params()
                     eta = eta * 0.5
-                    predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old )
+                    predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old)
                     f_train = predictor.train.compile()
                     f_predict = predictor.predict.compile()
                     f_cost = predictor.voxel_cost.compile()
@@ -86,7 +86,7 @@ def online_ridge():
                         print "Cost too high (%s)" % (test_cost)
                         eta = predictor.get_params()
                         eta = 0.5 * eta
-                        predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old )
+                        predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old,cost = test_cost )
                         f_train = predictor.train.compile()
                         f_predict = predictor.predict.compile()
                         f_cost = predictor.voxel_cost.compile()
@@ -97,7 +97,7 @@ def online_ridge():
                         print "Cost (%s) resetting parameters." % (test_cost)
                         eta = predictor.get_params()
                         eta = 0.5*eta
-                        predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old )
+                        predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old, cost = test_cost )
                         f_train = predictor.train.compile()
                         f_predict = predictor.predict.compile()
                         f_cost = predictor.voxel_cost.compile()
@@ -109,7 +109,8 @@ def online_ridge():
                         eta = predictor.get_params()
                         eta_old = eta
                         eta = 1.1 * eta
-                        predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old )
+                        
+                        predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, eta = eta, w = w_old)
                         
                         f_train = predictor.train.compile()
                         f_predict = predictor.predict.compile()
@@ -117,7 +118,7 @@ def online_ridge():
                         print "Increasing learning rate from %s to  %s" % (eta_old, eta)
 
 
-                    if abs(test_cost_old - test_cost) < eta * 0.001 and epoch > 10 * n_training_samples : # stopping condition
+                    if abs(test_cost_old - test_cost) < eta * 0.001 and epoch > 8 * n_training_samples : # stopping condition
                         print "No learning, move to next batch"
                         i = n_training_samples*n_epochs+1
 
