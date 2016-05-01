@@ -27,7 +27,7 @@ def online_ridge():
         x_test = np.nan_to_num((feature_map_test-np.mean(feature_map_test, axis=1)[:, None])/np.std(feature_map_test, axis=1)[:, None])
         
  # n_samples x n_feature
-        batch_size = 100
+        batch_size = 10
         n_in = x_train.shape[1]
         n_out = batch_size
         n_training_samples = x_train.shape[0]
@@ -54,7 +54,7 @@ def online_ridge():
             f_predict = predictor.predict.compile()
             f_cost = predictor.voxel_cost.compile()
             i = 0
-            while i < n_training_samples*n_epochs+1:
+            for i in xrange(0,_training_samples*n_epochs+1):
                 if i % score_report_period == 0:
                     out = f_predict(x_test)
                     test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
@@ -86,7 +86,7 @@ def online_ridge():
                     #epoch += n_training_samples
 
                 f_train(x_train[[i % n_training_samples]], y_train[i % n_training_samples, j: j+batch_size])
-                i += 1
+    
 
             cost_batch = f_cost(x_test, y_test[:,j:j+batch_size])
             cost_voxel[:,j:j+batch_size] =cost_batch
