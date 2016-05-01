@@ -1,0 +1,7 @@
+# CRCNS.org 'vim-1' dataset files
+# To use this for fetching files, comment out files that are
+# not needed by putting a '#' as the first character on the line (default mode)
+# or put a '+' as the first character to specifiy files to be fetched (+ mode).
+# mode='default' (change to '+' for + mode).
+ EstimatedResponses.mat	702526515 (669.9 MB)
+ Stimuli.mat	44289771 (42.2 MB)
