@@ -68,9 +68,9 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
                 input_im =  im2feat(stimuli_train[i])
                 named_features = func(input_im)
                 feat = named_features[l_name + '_layer']
-                regr_x[i] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
+                regr_x[i- n * batch] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
 
-                print "Done."
+            print "Done."
 
         print "Saving feature_maps..."
         dd.io.save("featuremaps_train_%s %s.h5" % (batch,l_name),  regr_x)
