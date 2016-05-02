@@ -3,7 +3,7 @@ from data_preprocessing import get_data
 from collections import OrderedDict
 import deepdish as dd
 from regressionridgev2 import LinearRegressor
-from multiprocessing.dummy import Pool as ThreadPool 
+
 
 
 
@@ -54,7 +54,7 @@ def online_ridge(region, mini_batch_size = 10, batch_size = 10, method = "Adam",
         f_predict = predictor.predict.compile()
         f_cost = predictor.voxel_cost.compile()
         
-        while j < y_train.shape[1]:
+        while j < 1: # y_train.shape[1]:
 
             print "training batch %s" % (j / batch_size)
             i =  0
