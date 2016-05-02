@@ -49,11 +49,11 @@ def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", step
         f_train = predictor.train.compile()
         f_predict = predictor.predict.compile()
         f_cost = predictor.voxel_cost.compile()
-        i = 0
+        
         while j < y_train.shape[1]:
 
             print "training batch %s" % (j / batch_size)
-            epoch = 0
+            i =  0
             if y_train.shape[1] - j < batch_size: #discard last batches 
                 n_out = y_train.shape[1] - j
                 break
