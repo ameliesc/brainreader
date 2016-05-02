@@ -5,7 +5,7 @@ from collections import OrderedDict
 import deepdish as dd
 from regressionridgev2 import LinearRegressor
 
-def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", stepsize = 0.01, region = 6, name = 'conv1_1'):
+def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", stepsize = 0.01, region = 6, name = 'conv1_1', lmbda = 0.01):
 
     # 
     layer_names = [name]
@@ -41,26 +41,24 @@ def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", step
         n_test_samples = x_test.shape[0]
         score_report_period = 350
         n_epochs = 10
-        lmbda = 0.01
+        lmbda = lmbda
         cost_voxel = np.zeros_like(y_test)
         weights_voxel = np.zeros((x_train.shape[1],y_train.shape[1]))
         j = 0
-        
+        predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, method = method, stepsize = stepsize)
+        f_train = predictor.train.compile()
+        f_predict = predictor.predict.compile()
+        f_cost = predictor.voxel_cost.compile()
+        i = 0
         while j < y_train.shape[1]:
 
             print "training batch %s" % (j / batch_size)
             epoch = 0
-            test_cost = 0
-            test_cost_old = 0
-            cost_min = 100
-            if y_train.shape[1] - j < batch_size:
+            if y_train.shape[1] - j < batch_size: #discard last batches 
                 n_out = y_train.shape[1] - j
+                break
             
-            predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, method = method, stepsize = stepsize)
-            f_train = predictor.train.compile()
-            f_predict = predictor.predict.compile()
-            f_cost = predictor.voxel_cost.compile()
-            i = 0
+           
             while i < n_training_samples*n_epochs+1:
                 try:
                     if i % score_report_period == 0:
@@ -108,6 +106,8 @@ def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", step
             j = j + batch_size
         regr_cost[name] = cost_voxel
         regr_coef[name] = weights_voxel
+        regr_predictions = f_predict(x_test)
+        return regr_predictions, y_ 
         dd.io.save("regression_coefficients_roi%s_%s.h5" % (roi,name), weights_voxel)
         dd.io.save("regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
 
