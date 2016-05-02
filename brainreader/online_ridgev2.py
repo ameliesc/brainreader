@@ -1,11 +1,15 @@
-
 import numpy as np
 from data_preprocessing import get_data
 from collections import OrderedDict
 import deepdish as dd
 from regressionridgev2 import LinearRegressor
+from multiprocessing.dummy import Pool as ThreadPool 
 
-def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", stepsize = 0.01, region = 6, name = 'conv1_1', lmbda = 0.01):
+
+
+
+
+def online_ridge(region, mini_batch_size = 10, batch_size = 10, method = "Adam", stepsize = 0.000001, name = 'fc7', lmbda = 0.01):
 
     # 
     layer_names = [name]
@@ -37,7 +41,7 @@ def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", step
         sample_batch_size = mini_batch_size
         n_in = x_train.shape[1]
         n_out = batch_size
-        n_training_samples = x_train.shape[0]
+        n_training_samples = 1 #x_train.shape[0]
         n_test_samples = x_test.shape[0]
         score_report_period = 350
         n_epochs = 10
@@ -107,7 +111,6 @@ def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", step
         regr_cost[name] = cost_voxel
         regr_coef[name] = weights_voxel
         regr_predictions = f_predict(x_test)
-        return regr_predictions, y_ 
         dd.io.save("regression_coefficients_roi%s_%s.h5" % (roi,name), weights_voxel)
         dd.io.save("regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
 
