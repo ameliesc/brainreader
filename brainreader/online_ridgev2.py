@@ -52,8 +52,6 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     f_cost = predictor.voxel_cost.compile()
         
     while j < y_train.shape[1]:
-
-        print "training batch %s" % (j / batch_size)
         i =  0
         if y_train.shape[1] - j < batch_size: #discard last batches 
             n_out = y_train.shape[1] - j
@@ -82,13 +80,13 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
 
 if __name__ == '__main__':
     for name in ['fc8','fc7','fc6']:
-        print name + "regression ..."
+        print name + " regression ..."
         for i in xrange(1,8):
             online_ridge(region = i, stepsize=0.000001, epochs = 15, name=name)
         print "Done."
 
     for name in ['conv5_4','conv5_3','conv5_2','conv5_1']:
-        print name + "regression ..."
+        print name + " regression ..."
         for i in xrange(1,8):
             online_ridge(region = i, stepsize=0.0000001, epochs = 15, name=name)
         print "Done."
