@@ -8,7 +8,7 @@ class LinearRegressor:
 
     def __init__(self, n_in, n_out, lmbda, method = "RMSProp",stepsize = 0.01):
         if method == "RMSProp":
-            self.optimizer = RMSProp(learning_rate = stepcsize)
+            self.optimizer = RMSProp(learning_rate = stepsize)
         elif method == "Adam":
             self.optimizer = Adam(alpha = stepsize)
         self.w = theano.shared(np.ones((n_in, n_out)) * 1/np.sqrt(n_in))
