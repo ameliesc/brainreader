@@ -9,7 +9,7 @@ from regressionridgev2 import LinearRegressor
 
 
 
-def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam", stepsize = 0.000001, name = 'fc6', lmbda = 0.01, epochs = 7):
+def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam", stepsize = 0.000001, name = 'fc6', lmbda = 0.01, epochs = 15):
 
     regr_coef  = OrderedDict()
     regr_cost = OrderedDict()
@@ -80,3 +80,6 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     dd.io.save("regression_coefficients_roi%s_%s.h5" % (roi,name), weights_voxel)
     dd.io.save("regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
 
+#fc6 , fc7, fc8: stepsize = 0.000001, epoch = 15 / others default
+#conv5_4, conv 5_2, conv5_3: stepsize = 0.0000001 epoch = 15/ others default
+# lowe layers memory error need different implementation (dont concatenate batches)
