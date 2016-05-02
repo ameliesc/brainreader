@@ -4,7 +4,7 @@ from collections import OrderedDict
 import deepdish as dd
 from regressionridgev2 import LinearRegressor
 
-def online_ridge():
+def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", stepsize = 0.01):
 
     # ['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2','conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1','conv4_2', 'conv4_3',  'conv4_4','conv5_1','conv5_2',  'conv5_3',, 'conv5_4', 'fc6', 'fc7','fc8'
     layer_names = [  'conv5_2']
@@ -14,7 +14,16 @@ def online_ridge():
     for name in layer_names:
 
         print "load featuremap for training.."
+<<<<<<< HEAD
         feature_map_train = dd.io.load("featuremaps_train_%s.h5" % (name))
+=======
+        feature_map_batch1= dd.io.load("featuremaps_train_1 %s.h5" % (i,name))
+        feature_map_batch2= dd.io.load("featuremaps_train_2 %s.h5" % (,name))
+        feature_map_batch3= dd.io.load("featuremaps_train_%s %s.h5" % (i,name))
+        feature_map_batch4= dd.io.load("featuremaps_train_%s %s.h5" % (i,name))
+        feature_map_batch5= dd.io.load("featuremaps_train_%s %s.h5" % (i,name))
+        feature_map_train = np.concatenate((feature_map_batch1,feature_map_batch2,feature_map_batch3,feature_map_batch4, feature_map_batch5), axis = 0)
+>>>>>>> e5c1e0cbe0ad19586b3c134359fe5709a615ea83
         print "load featuremap for testing.."
         feature_map_test = dd.io.load("featuremaps_test_%s.h5" % (name))
         print "Done."
@@ -27,13 +36,14 @@ def online_ridge():
         x_test = np.nan_to_num((feature_map_test-np.mean(feature_map_test, axis=1)[:, None])/np.std(feature_map_test, axis=1)[:, None])
         
  # n_samples x n_feature
-        batch_size = 10
+        batch_size = batch_size
+        sample_batch_size = mini_batch_size
         n_in = x_train.shape[1]
         n_out = batch_size
         n_training_samples = x_train.shape[0]
         n_test_samples = x_test.shape[0]
         score_report_period = 500
-        n_epochs = 100
+        n_epochs = 10
         lmbda = 0.01
         cost_voxel = np.zeros_like(y_test)
         weights_voxel = np.zeros((x_train.shape[1],y_train.shape[1]))
@@ -49,12 +59,16 @@ def online_ridge():
             if y_train.shape[1] - j < batch_size:
                 n_out = y_train.shape[1] - j
             
-            predictor = LinearRegressor(n_in, n_out, lmbda = lmbda)
+            predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, method = method, stepsize = stepsize)
             f_train = predictor.train.compile()
             f_predict = predictor.predict.compile()
             f_cost = predictor.voxel_cost.compile()
             i = 0
+<<<<<<< HEAD
             for i in xrange(0,n_training_samples*n_epochs+1):
+=======
+            while i < trainign_samples*n_epochs+1:
+>>>>>>> e5c1e0cbe0ad19586b3c134359fe5709a615ea83
                 if i % score_report_period == 0:
                     out = f_predict(x_test)
                     test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
@@ -85,8 +99,8 @@ def online_ridge():
                     #test_cost_old = test_cost    
                     #epoch += n_training_samples
 
-                f_train(x_train[[i % n_training_samples]], y_train[i % n_training_samples, j: j+batch_size])
-    
+                f_train(x_train[i: i+sample_batch_size,:], y_train[i % n_training_samples, j: j+batch_size])
+                i += sample_batch_size
 
             cost_batch = f_cost(x_test, y_test[:,j:j+batch_size])
             cost_voxel[:,j:j+batch_size] =cost_batch

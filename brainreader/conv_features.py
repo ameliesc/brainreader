@@ -47,7 +47,7 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
     input_im = stim
     batch = 350
     sample_size = batch
-    n = 0
+    n = 1
     while n < 5:
         sample_size_end = n * batch + batch
         
@@ -75,4 +75,5 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
             print "Saving feature_maps..."
             dd.io.save("featuremaps_train_%s %s.h5" % (batch,l_name),  regr_x)
             print "Done."
+        n += 1  
 
