@@ -47,16 +47,18 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
     input_im = stim
     batch = 350
     sample_size = batch
-    n = 1
-    while n < 5:
-        sample_size_end = n * batch + batch
-        
-        for l_name in layer_names:
+    
+    for l_name in layer_names:
         
         
-            net = get_vgg_net(up_to_layer = l_name)
-            func = net.get_named_layer_activations.compile()
-            input_im =  im2feat(stimuli_train[0])
+        net = get_vgg_net(up_to_layer = l_name)
+        func = net.get_named_layer_activations.compile()
+        n = 1
+        while n < 5:
+            print 'At batch %s' %(n)
+            sample_size_end = n * batch + batch
+        
+            input_im =  im2feat(stimuli_train[n*batch])
             named_features = func(input_im)
             feat = named_features[l_name + '_layer']
             regr_x = np.empty((sample_size, feat.shape[1] * feat.shape[2] * feat.shape[3]))
