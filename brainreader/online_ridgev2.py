@@ -3,7 +3,7 @@ from data_preprocessing import get_data
 from collections import OrderedDict
 import deepdish as dd
 from regressionridgev2 import LinearRegressor
-import multiprocessing
+
 
 
 
@@ -38,7 +38,7 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     sample_batch_size = mini_batch_size
     n_in = x_train.shape[1]
     n_out = batch_size
-    n_training_samples = 1 #x_train.shape[0]
+    n_training_samples = x_train.shape[0]
     n_test_samples = x_test.shape[0]
     score_report_period = 350
     n_epochs = 7
@@ -51,7 +51,7 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     f_predict = predictor.predict.compile()
     f_cost = predictor.voxel_cost.compile()
         
-    while j < 1: # y_train.shape[1]:
+    while j < y_train.shape[1]:
 
         print "training batch %s" % (j / batch_size)
         i =  0
@@ -80,10 +80,8 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     dd.io.save("regression_coefficients_roi%s_%s.h5" % (roi,name), weights_voxel)
     dd.io.save("regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
 
+if __name__ == '__main__':
+    for i in xrange(1,8):
+        online_ridge(region = i)
 
-
-pool = multiprocessing.Pool(processes=2)
-region = [1,2,3,4,5,6,7]
-pool.map(online_ridge,region)
-pool.close()
 
