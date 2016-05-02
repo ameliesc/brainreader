@@ -74,6 +74,7 @@ def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", step
                        
                 except KeyboardInterrupt:
                     print 'All done'
+                    break
 
                 #if i == epoch:
                     #if  abs(test_cost_old - test_cost) < 1e-9 and epoch > 6 *  n_training_samples: #stopping condition
