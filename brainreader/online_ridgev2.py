@@ -8,7 +8,7 @@ from regressionridgev2 import LinearRegressor
 def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", stepsize = 0.01, region = 6, name = 'conv1_1'):
 
     # 
-    layer_names = name
+    layer_names = [name]
 
     regr_coef  = OrderedDict()
     regr_cost = OrderedDict()
