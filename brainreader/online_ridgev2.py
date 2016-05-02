@@ -60,17 +60,7 @@ def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", step
             f_predict = predictor.predict.compile()
             f_cost = predictor.voxel_cost.compile()
             i = 0
-<<<<<<< HEAD
-            for i in xrange(0,n_training_samples*n_epochs+1):
-=======
             while i < trainign_samples*n_epochs+1:
-<<<<<<< HEAD
->>>>>>> e5c1e0cbe0ad19586b3c134359fe5709a615ea83
-                if i % score_report_period == 0:
-                    out = f_predict(x_test)
-                    test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
-                    cost_min = min(cost_min,test_cost)
-=======
                 try:
                     if i % score_report_period == 0:
                         out = f_predict(x_test)
@@ -79,7 +69,6 @@ def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", step
 
                     f_train(x_train[i: i+sample_batch_size,:], y_train[i % n_training_samples, j: j+batch_size])
                     i += sample_batch_size
->>>>>>> c6f61bb853011c8b5a6b08e0992fdc38095b3ae7
 
                        
                 except KeyboardInterrupt:
