@@ -53,7 +53,7 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
         
         net = get_vgg_net(up_to_layer = l_name)
         func = net.get_named_layer_activations.compile()
-        n = 1
+        n = 0
         while n < 5:
             print 'At batch %s' %(n)
             sample_size_end = n * batch + batch
