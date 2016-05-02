@@ -9,7 +9,7 @@ from regressionridgev2 import LinearRegressor
 
 
 
-def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam", stepsize = 0.000001, name = 'fc6', lmbda = 0.01):
+def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam", stepsize = 0.000001, name = 'fc6', lmbda = 0.01, epochs = 15):
 
     regr_coef  = OrderedDict()
     regr_cost = OrderedDict()
@@ -41,7 +41,7 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     n_training_samples = x_train.shape[0]
     n_test_samples = x_test.shape[0]
     score_report_period = 350
-    n_epochs = 7
+    n_epochs = epochs
     lmbda = lmbda
     cost_voxel = np.zeros_like(y_test)
     weights_voxel = np.zeros((x_train.shape[1],y_train.shape[1]))
