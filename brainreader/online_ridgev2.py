@@ -14,24 +14,20 @@ def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", step
     for name in layer_names:
 
         print "load featuremap for training.."
-<<<<<<< HEAD
-        feature_map_train = dd.io.load("featuremaps_train_%s.h5" % (name))
-=======
-        feature_map_batch1= dd.io.load("featuremaps_train_1 %s.h5" % (i,name))
-        feature_map_batch2= dd.io.load("featuremaps_train_2 %s.h5" % (,name))
-        feature_map_batch3= dd.io.load("featuremaps_train_%s %s.h5" % (i,name))
-        feature_map_batch4= dd.io.load("featuremaps_train_%s %s.h5" % (i,name))
-        feature_map_batch5= dd.io.load("featuremaps_train_%s %s.h5" % (i,name))
+        feature_map_batch1= dd.io.load("featuremaps_train_0_%s.h5" % (name))
+        feature_map_batch2= dd.io.load("featuremaps_train_1_%s.h5" % (name))
+        feature_map_batch3= dd.io.load("featuremaps_train_2_%s.h5" % (name))
+        feature_map_batch4= dd.io.load("featuremaps_train_3_%s.h5" % (name))
+        feature_map_batch5= dd.io.load("featuremaps_train_4_%s.h5" % (name))
         feature_map_train = np.concatenate((feature_map_batch1,feature_map_batch2,feature_map_batch3,feature_map_batch4, feature_map_batch5), axis = 0)
->>>>>>> e5c1e0cbe0ad19586b3c134359fe5709a615ea83
         print "load featuremap for testing.."
         feature_map_test = dd.io.load("featuremaps_test_%s.h5" % (name))
         print "Done."
-
-        y_train = get_data(response=1, roi = 6)
+        roi = 6
+        y_train = get_data(response=1, roi = roi)
     
         x_train = np.nan_to_num((feature_map_train-np.mean(feature_map_train, axis=1)[:, None])/np.std(feature_map_train, axis=1)[:, None])
-        y_test = get_data(response=1, data='test', roi = 6 )  # n_samples x n_targets
+        y_test = get_data(response=1, data='test', roi = roi )  # n_samples x n_targets
         x_old = feature_map_test
         x_test = np.nan_to_num((feature_map_test-np.mean(feature_map_test, axis=1)[:, None])/np.std(feature_map_test, axis=1)[:, None])
         
@@ -42,7 +38,7 @@ def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", step
         n_out = batch_size
         n_training_samples = x_train.shape[0]
         n_test_samples = x_test.shape[0]
-        score_report_period = 500
+        score_report_period = 350
         n_epochs = 10
         lmbda = 0.01
         cost_voxel = np.zeros_like(y_test)
@@ -68,13 +64,26 @@ def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", step
             for i in xrange(0,n_training_samples*n_epochs+1):
 =======
             while i < trainign_samples*n_epochs+1:
+<<<<<<< HEAD
 >>>>>>> e5c1e0cbe0ad19586b3c134359fe5709a615ea83
                 if i % score_report_period == 0:
                     out = f_predict(x_test)
                     test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
                     cost_min = min(cost_min,test_cost)
+=======
+                try:
+                    if i % score_report_period == 0:
+                        out = f_predict(x_test)
+                        test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
+                        print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
 
-                    print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
+                    f_train(x_train[i: i+sample_batch_size,:], y_train[i % n_training_samples, j: j+batch_size])
+                    i += sample_batch_size
+>>>>>>> c6f61bb853011c8b5a6b08e0992fdc38095b3ae7
+
+                       
+                except KeyboardInterrupt:
+                    print 'All done'
 
                 #if i == epoch:
                     #if  abs(test_cost_old - test_cost) < 1e-9 and epoch > 6 *  n_training_samples: #stopping condition
@@ -99,8 +108,7 @@ def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", step
                     #test_cost_old = test_cost    
                     #epoch += n_training_samples
 
-                f_train(x_train[i: i+sample_batch_size,:], y_train[i % n_training_samples, j: j+batch_size])
-                i += sample_batch_size
+                
 
             cost_batch = f_cost(x_test, y_test[:,j:j+batch_size])
             cost_voxel[:,j:j+batch_size] =cost_batch
@@ -109,7 +117,7 @@ def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", step
             j = j + batch_size
         regr_cost[name] = cost_voxel
         regr_coef[name] = weights_voxel
-        dd.io.save("regression_coefficients_roi6_%s.h5" % (name), weights_voxel)
-        dd.io.save("regression_cost_roi6_%s.h5" % (name), cost_voxel)
+        dd.io.save("regression_coefficients_roi%s_%s.h5" % (n,name), weights_voxel)
+        dd.io.save("regression_cost_roi%s_%s.h5" % (n,name), cost_voxel)
 
 
