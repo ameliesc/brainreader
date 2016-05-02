@@ -1,3 +1,4 @@
+
 import numpy as np
 from data_preprocessing import get_data
 from collections import OrderedDict
@@ -60,7 +61,7 @@ def online_ridge(mini_batch_size = 10, batch_size = 10, method = "RMSProp", step
             f_predict = predictor.predict.compile()
             f_cost = predictor.voxel_cost.compile()
             i = 0
-            while i < trainign_samples*n_epochs+1:
+            while i < n_training_samples*n_epochs+1:
                 try:
                     if i % score_report_period == 0:
                         out = f_predict(x_test)
