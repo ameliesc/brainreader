@@ -6,14 +6,13 @@ from plato.tools.optimization.optimizers import RMSProp, AdaGrad, Adam
 
 class LinearRegressor:
 
-    def __init__(self, n_in, n_out, lmbda, eta= 0.01, w = None):
-        self.optimizer = RMSProp(learning_rate = 0.001)
-        if w is None:
-            self.w = theano.shared(np.zeros((n_in, n_out)))
-        else:
-            self.w = theano.shared(np.random.rand(n_in,n_out))
+    def __init__(self, n_in, n_out, lmbda, method = "RMSProp",stepsize = 0.01):
+        if method == "RMSProp":
+            self.optimizer = RMSProp(learning_rate = stepcsize)
+        elif method == "Adam":
+            self.optimizer = Adam(alpha = stepsize)
+        self.w = theano.shared(np.ones((n_in, n_out)) * 1/np.sqrt(n_in))
         self.lmbda = lmbda
-        self.eta = eta
 
     @symbolic
     def train(self, x, targ):# x: (n_samples, n_in), targ: (n_samples, n_out)
