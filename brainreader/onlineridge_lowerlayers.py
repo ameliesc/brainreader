@@ -37,6 +37,8 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     n_epochs = epochs
     lmbda = lmbda
     cost_voxel = np.zeros_like(y_test)
+    feature_map_train= dd.io.load("featuremaps_train_roi0_%s.h5" % (n,name))
+    x_train = np.nan_to_num((feature_map_train-np.mean(feature_map_train, axis=1)[:, None])/np.std(feature_map_train, axis=1)[:, None])
     weights_voxel = np.zeros((x_train.shape[1],y_train.shape[1]))
     j = 0
     predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, method = method, stepsize = stepsize)
@@ -52,9 +54,9 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
            
         while i < n_training_samples*n_epochs+1 :
             k = i % 350
-            n = 0
-            if k == 0:
-                feature_map_train= dd.io.load("featuremaps_train_%s_%s.h5" % (n,name))
+            n = 1
+            if k == 0 and i !=0:
+                feature_map_train= dd.io.load("featuremaps_train_roi%s_%s.h5" % (n,name))
                 x_train = np.nan_to_num((feature_map_train-np.mean(feature_map_train, axis=1)[:, None])/np.std(feature_map_train, axis=1)[:, None])
                 n += 1 
 
@@ -72,10 +74,10 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     dd.io.save("regression_coefficients_roi%s_%s.h5" % (roi,name), weights_voxel)
     dd.io.save("regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
 
-if __name__ == '__main__':
-    for name in ['conv4_4','conv3_4','conv2_2','conv1_2']:
-        print name + " regression ..."
-        for i in xrange(1,8):
-            online_ridge(region = i, stepsize=0.000001, epochs = 15, name=name, mini_batch_size=10, batch_size=1)
-        print "Done."
+#if __name__ == '__main__':
+ #   for name in ['conv4_4','conv3_4','conv2_2','conv1_2']:
+  #      print name + " regression ..."
+   #     for i in xrange(1,8):
+    #        online_ridge(region = i, stepsize=0.000001, epochs = 15, name=name, mini_batch_size=10, batch_size=1)
+     #   print "Done."
 
