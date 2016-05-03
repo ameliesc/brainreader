@@ -29,7 +29,6 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     # n_samples x n_feature
     batch_size = batch_size
     sample_batch_size = mini_batch_size
-    batch_size = y_train.shape[1]
     n_in = x_test.shape[1]
     n_out = batch_size
     n_training_samples = y_train.shape[0]
