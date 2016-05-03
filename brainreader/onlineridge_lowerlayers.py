@@ -55,9 +55,13 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
            
         while i < n_training_samples*n_epochs+1 :
             k = i % 350
+            if i % score_report_period == 0:
+                out = f_predict(x_test)
+                test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
+                print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
             n = 1
             if k == 0 and i !=0:
-                #print "load next batch"
+                #
                 feature_map_train= dd.io.load("featuremaps_train_%s_%s.h5" % (n,name))
                 x_train = np.nan_to_num((feature_map_train-np.mean(feature_map_train, axis=1)[:, None])/np.std(feature_map_train, axis=1)[:, None])
                 n += 1 
