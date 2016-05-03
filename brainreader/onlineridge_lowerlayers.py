@@ -47,7 +47,7 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     f_cost = predictor.voxel_cost.compile()
         
     while j < y_train.shape[1]:
-        print "At batch %s / %s" % (j/batch_size, y.train.shape[1]/batch_size)
+        print "At batch %s / %s" % (j/batch_size, y_train.shape[1]/batch_size)
         i =  0
         if y_train.shape[1] - j < batch_size: #discard last batches 
             n_out = y_train.shape[1] - j
