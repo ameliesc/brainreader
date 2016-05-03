@@ -78,7 +78,10 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     dd.io.save("regression_coefficients_roi%s_%s.h5" % (roi,name), weights_voxel)
     dd.io.save("regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
 
-#if __name__ == '__main__':
+if __name__ == '__main__':
+    online_ridge(region = 3, stepsize=0.0000001, epochs = 15, name='conv4_4', mini_batch_size=10, batch_size=1)
+    online_ridge(region = 3, stepsize=0.0000001, epochs = 15, name='conv3_4', mini_batch_size=10, batch_size=1)
+    online_ridge(region = 3, stepsize=0.0000001, epochs = 10, name='conv2_2', mini_batch_size=10, batch_size=1)
  #   for name in ['conv4_4','conv3_4','conv2_2','conv1_2']:
   #      print name + " regression ..."
    #     for i in xrange(1,8):
