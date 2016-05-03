@@ -84,7 +84,7 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
 if __name__ == '__main__':
     for i in xrange(1,8):
         print "conv4_4"
-        online_ridge(region = i, stepsize=0.0000001, epochs = 10, name='conv4_4', mini_batch_size=10, batch_size=1)
+        online_ridge(region = i, stepsize=0.00000001, epochs = 10, name='conv4_4', mini_batch_size=10, batch_size=1)
         print "conv3_4"
         online_ridge(region = i, stepsize=0.0000001, epochs = 10, name='conv3_4', mini_batch_size=10, batch_size=1)
         print "conv2_2"
