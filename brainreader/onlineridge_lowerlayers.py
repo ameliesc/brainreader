@@ -46,7 +46,7 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     f_predict = predictor.predict.compile()
     f_cost = predictor.voxel_cost.compile()
         
-    while j < y_train.shape[1]:
+    while j < 30: # takes too long restict to 30 voxels
         print "At batch %s / %s" % (j/batch_size, y_train.shape[1]/batch_size)
         i =  0
         if y_train.shape[1] - j < batch_size: #discard last batches 
@@ -82,13 +82,13 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     dd.io.save("regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
 
 if __name__ == '__main__':
-    for i in xrange(1,8):
+    for i in xrange(1,7):
         print "conv4_4"
-        online_ridge(region = i, stepsize=0.00000001, epochs = 10, name='conv4_4', mini_batch_size=50, batch_size=10)
+        online_ridge(region = i, stepsize=0.00000001, epochs = 15, name='conv4_4', mini_batch_size=50, batch_size=10)
         print "conv3_4"
-        online_ridge(region = i, stepsize=0.00000001, epochs = 10, name='conv3_4', mini_batch_size=50, batch_size=10)
+        online_ridge(region = i, stepsize=0.00000001, epochs = 15, name='conv3_4', mini_batch_size=50, batch_size=10)
         print "conv2_2"
-        online_ridge(region = i, stepsize=0.00000001, epochs = 10, name='conv2_2', mini_batch_size=50, batch_size=10)
+        online_ridge(region = i, stepsize=0.00000001, epochs = 15, name='conv2_2', mini_batch_size=50, batch_size=10)
  #   for name in ['conv4_4','conv3_4','conv2_2','conv1_2']:
   #      print name + " regression ..."
    #     for i in xrange(1,8):
