@@ -60,10 +60,7 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
                 x_train = np.nan_to_num((feature_map_train-np.mean(feature_map_train, axis=1)[:, None])/np.std(feature_map_train, axis=1)[:, None])
                 n += 1 
 
-            if i % score_report_period == 0:
-                out = f_predict(x_test)
-                test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
-                print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
+           
 
             f_train(x_train[k: k+sample_batch_size,:], y_train[i % n_training_samples, j: j+batch_size])
             i += sample_batch_size
