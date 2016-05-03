@@ -37,7 +37,7 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     n_epochs = epochs
     lmbda = lmbda
     cost_voxel = np.zeros_like(y_test)
-    feature_map_train= dd.io.load("featuremaps_train_roi0_%s.h5" % (n,name))
+    feature_map_train= dd.io.load("featuremaps_train_roi0_%s.h5" % (name))
     x_train = np.nan_to_num((feature_map_train-np.mean(feature_map_train, axis=1)[:, None])/np.std(feature_map_train, axis=1)[:, None])
     weights_voxel = np.zeros((x_train.shape[1],y_train.shape[1]))
     j = 0
@@ -60,6 +60,10 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
                 x_train = np.nan_to_num((feature_map_train-np.mean(feature_map_train, axis=1)[:, None])/np.std(feature_map_train, axis=1)[:, None])
                 n += 1 
 
+            if i % score_report_period == 0:
+                out = f_predict(x_test)
+                test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
+                print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
 
             f_train(x_train[k: k+sample_batch_size,:], y_train[i % n_training_samples, j: j+batch_size])
             i += sample_batch_size
