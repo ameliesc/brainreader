@@ -82,10 +82,17 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     dd.io.save("regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
 
 if __name__ == '__main__':
-    for i in xrange(1,7):
-        print "conv4_4"
-        online_ridge(region = i, stepsize=0.00000001, epochs = 15, name='conv4_4', mini_batch_size=50, batch_size=10)
-        print "conv3_4"
+     for name in ['conv5_3','conv5_2','conv5_1']:
+        print name + " regression ..."
+        for i in xrange(1,8):
+            online_ridge(region = i, stepsize=0.0000001, epochs = 15, name=name)
+        print "Done."
+        for name in ["conv4_4, ",'conv4_3','conv4_2','conv4_1']:
+            for i in xrange(1,7):
+                print name
+                online_ridge(region = i, stepsize=0.00000001, epochs = 15, name='conv4_4', mini_batch_size=50, batch_size=10)
+    for name in ["conv3_4, ",'conv3_3','conv3_2','conv3_1']:
+        for i in xrange(1,7):
         online_ridge(region = i, stepsize=0.00000001, epochs = 15, name='conv3_4', mini_batch_size=50, batch_size=10)
         print "conv2_2"
         online_ridge(region = i, stepsize=0.00000001, epochs = 15, name='conv2_2', mini_batch_size=50, batch_size=10)
