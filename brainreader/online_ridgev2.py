@@ -52,6 +52,9 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     f_cost = predictor.voxel_cost.compile()
         
     while j < y_train.shape[1]:
+        f_train = predictor.train.compile()
+        f_predict = predictor.predict.compile()
+        f_cost = predictor.voxel_cost.compile()
         i =  0
         if y_train.shape[1] - j < batch_size: #discard last batches 
             n_out = y_train.shape[1] - j
@@ -74,9 +77,9 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
         weights_voxel[:,j:j+batch_size] = w[0].get_value()
         j = j + batch_size
     regr_predictions = f_predict(x_test)
-    dd.io.save("regression_coefficients_roi%s_%s.h5" % (roi,name), regr_predictions)
-    dd.io.save("regression_coefficients_roi%s_%s.h5" % (roi,name), weights_voxel)
-    dd.io.save("regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
+    dd.io.save("regression_coefficients2_roi%s_%s.h5" % (roi,name), regr_predictions)
+    dd.io.save("regression_coefficients2_roi%s_%s.h5" % (roi,name), weights_voxel)
+    dd.io.save("regression_cost2_roi%s_%s.h5" % (roi,name), cost_voxel)
 
 if __name__ == '__main__':
     for name in ['fc8','fc7','fc6']:
