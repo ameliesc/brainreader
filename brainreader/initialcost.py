@@ -1,4 +1,4 @@
-mport numpy as np
+import numpy as np
 from data_preprocessing import get_data
 from collections import OrderedDict
 import deepdish as dd
