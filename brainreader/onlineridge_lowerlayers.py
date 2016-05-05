@@ -49,14 +49,14 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
         if y_train.shape[1] - j < batch_size: #discard last batches 
             n_out = y_train.shape[1] - j
             break
-           
+        n = 1   
         while i < n_training_samples*n_epochs+1 :
             k = i % 175
             if i % score_report_period == 0:
                 out = f_predict(x_test)
                 test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
                 print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
-            n = 1
+
             if k == 0 and i !=0:
                 print "loading batch %s" % (n)
                 feature_map_train= dd.io.load("/data/featuremaps_train_%s_%s.h5" % (n,name))
