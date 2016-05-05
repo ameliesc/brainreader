@@ -76,8 +76,8 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
                 weights_voxel[:,j:j+batch_size] = w[0].get_value()
                 j = j + batch_size
 
-           f_train(x_train[k: k+sample_batch_size,:], y_train[k: k+sample_batch_size, j: j+batch_size])
-           i += sample_batch_size
+            f_train(x_train[k: k+sample_batch_size,:], y_train[k: k+sample_batch_size, j: j+batch_size])
+            i += sample_batch_size
 
            
          
