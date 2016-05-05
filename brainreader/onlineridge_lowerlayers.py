@@ -57,7 +57,7 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
                 test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
                 print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
 
-            if k == 0 and i !=0 and i != :
+            if k == 0 and i !=0  :
                 print i
                 print k
                 print "loading batch %s" % (n)
