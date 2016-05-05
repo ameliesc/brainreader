@@ -54,21 +54,21 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
     
         try:
             while i < n_training_samples*n_epochs+1 :
-            k = i % 175
-            if i % score_report_period == 0:
-                out = f_predict(x_test)
-                test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
-                print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
+                k = i % 175
+                if i % score_report_period == 0:
+                    out = f_predict(x_test)
+                    test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
+                    print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
 
-            if k == 0 and i !=0  :
-                feature_map_train= dd.io.load("/data/featuremaps_train_%s_%s.h5" % (n,name))
-                x_train = np.nan_to_num((feature_map_train-np.mean(feature_map_train, axis=1)[:, None])/np.std(feature_map_train, axis=1)[:, None])
-                n += 1
-                if i % 1750 == 0: #reset batch loading, one epoch passed
-                    n = 0
+                if k == 0 and i !=0  :
+                    feature_map_train= dd.io.load("/data/featuremaps_train_%s_%s.h5" % (n,name))
+                    x_train = np.nan_to_num((feature_map_train-np.mean(feature_map_train, axis=1)[:, None])/np.std(feature_map_train, axis=1)[:, None])
+                    n += 1
+                    if i % 1750 == 0: #reset batch loading, one epoch passed
+                        n = 0
 
-            f_train(x_train[k: k+sample_batch_size,:], y_train[k: k+sample_batch_size, j: j+batch_size])
-            i += sample_batch_size
+                f_train(x_train[k: k+sample_batch_size,:], y_train[k: k+sample_batch_size, j: j+batch_size])
+                i += sample_batch_size
         except KeyboardInterrupt:
             cost_batch = f_cost(x_test, y_test[:,j:j+batch_size])
             cost_voxel[:,j:j+batch_size] =cost_batch
