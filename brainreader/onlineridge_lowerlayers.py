@@ -42,6 +42,7 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
         
     while j < y_train.shape[1]: # takes too long restict to 30 voxels
         print "At batch %s / %s" % (j/batch_size, y_train.shape[1]/batch_size - 1)
+        predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, method = method, stepsize = stepsize)
         f_train = predictor.train.compile()
         f_predict = predictor.predict.compile()
         f_cost = predictor.voxel_cost.compile()
@@ -89,6 +90,5 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
 #         for i in xrange(1,7):
 #             online_ridge(region = i, stepsize=0.00000001, epochs = 15, name='conv3_4', mini_batch_size=50, batch_size=10)
 
-#             online_ridge(region = i, stepsize=0.00000001, epochs = 15, name='conv2_2', mini_batch_size=50, batch_size=10)
+#             online_ridge(region = i, stepsize=0.00000001, epochs = 15, name='conv2_2', mini_batch_size=50, batch_size=10)#
 
-#conv 5_5 :

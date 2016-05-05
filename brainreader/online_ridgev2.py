@@ -48,6 +48,7 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
     f_cost = predictor.voxel_cost.compile()
         
     while j < y_train.shape[1]:  # batches for targest
+        predictor = LinearRegressor(n_in, n_out, lmbda = lmbda, method = method, stepsize = stepsize)
         f_train = predictor.train.compile()
         f_predict = predictor.predict.compile()
         f_cost = predictor.voxel_cost.compile()
@@ -85,4 +86,5 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
 #             online_ridge(region = i, stepsize=0.00000001, epochs = 15, name=name)
 #         print "Done."
             
-
+#fc6 region 1,2,region 1: online_ridge(region=2, mini_batch_size = 100, batch_size = 10, method = "Adam", stepsize = 0.00001, name = 'fc6', lmbda = 0.01, epochs = 20)
+#region 6.7:online_ridge(region=6, mini_batch_size = 100, batch_size = 10, method = "Adam", stepsize = 0.00001, name = 'fc6', lmbda = 0.1, epochs = 20)
