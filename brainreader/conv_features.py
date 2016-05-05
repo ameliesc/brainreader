@@ -44,7 +44,7 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
 
     stim = im2feat(stimuli_train[0])
     input_im = stim
-    batch = 350
+    batch = 175
     sample_size = batch
     
     for l_name in layer_names:
