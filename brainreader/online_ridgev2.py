@@ -79,12 +79,10 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
     dd.io.save("/data/regression_coefficients_roi%s_%s.h5" % (roi,name), weights_voxel)
     dd.io.save("/data/regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
 
-# if __name__ == '__main__':
-#     for name in ['fc8','fc7','fc6']:
-#         print name + " regression ..."
-#         for i in [1,2,6,7]:
-#             online_ridge(region = i, stepsize=0.00000001, epochs = 15, name=name)
-#         print "Done."
-            
-#fc6 region 1,2,region 1: online_ridge(region=2, mini_batch_size = 100, batch_size = 10, method = "Adam", stepsize = 0.00001, name = 'fc6', lmbda = 0.01, epochs = 20)
-#region 6.7:online_ridge(region=6, mini_batch_size = 100, batch_size = 10, method = "Adam", stepsize = 0.00001, name = 'fc6', lmbda = 0.1, epochs = 20)
+if __name__ == '__main__':
+    for name in ['fc8','fc7']:
+        print name + " regression ..."
+        for i in [1,2,6,7]:
+            online_ridge(region=6, mini_batch_size = 100, batch_size = 10, method = "Adam", stepsize = 0.00001, name = name, lmbda = 0.01, epochs = 20)
+
+        print "Done."
