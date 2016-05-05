@@ -5,10 +5,6 @@ import deepdish as dd
 from regressionridgev2 import LinearRegressor
 
 
-
-
-
-
 def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam", stepsize = 0.000001, name = 'fc6', lmbda = 0.01, epochs = 15):
 
 
