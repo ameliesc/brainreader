@@ -19,7 +19,7 @@ def arrange():
 def filtervoxels(n = 1):
    
     print "Comparing layers in regions %s" % (n)
-    conv5 = dd.io.load('/data/regression_cost_roi%s_conv5_4.h5' % (n) )
+    conv5 = dd.io.load('/data/regression_cost_roi%s_conv5_1.h5' % (n) )
     fc6 = dd.io.load('/data/regression_cost_roi%s_fc6.h5' % (n) )
     fc7 = dd.io.load('/data/regression_cost_roi%s_fc7.h5' % (n) )
     fc8 = dd.io.load('/data/regression_cost_roi%s_fc8.h5' % (n) )
