@@ -40,7 +40,7 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
     layer_names = ['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2',
                    'conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1',
                    'conv4_2', 'conv4_3',  'conv4_4', 'conv5_1',
-                   'conv5_2',  'conv5_3',  'conv5_4'']
+                   'conv5_2',  'conv5_3',  'conv5_4']
 
     stim = im2feat(stimuli_train[0])
     input_im = stim
