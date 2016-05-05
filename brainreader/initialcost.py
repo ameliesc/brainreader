@@ -60,9 +60,6 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
                 out = f_predict(x_test)
                 test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
                 print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
-
-            f_train(x_train[i: i+sample_batch_size,:], y_train[i: i+sample_batch_size, j: j+batch_size])
-
          
         cost_batch = f_cost(x_test, y_test[:,j:j+batch_size])
         cost_voxel[:,j:j+batch_size] =cost_batch
