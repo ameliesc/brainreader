@@ -63,5 +63,6 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
          
         cost_batch = f_cost(x_test, y_test[:,j:j+batch_size])
         cost_voxel[:,j:j+batch_size] =cost_batch
+        j = j + batch_size
 
     dd.io.save("/data/regression_cost_init_roi%s_%s.h5" % (roi,name), cost_voxel)
