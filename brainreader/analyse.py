@@ -32,7 +32,7 @@ def filtervoxels(n = 1):
     fc7_new = OrderedDict()
     fc8_new = OrderedDict()
     for i in range (1,120):
-        conv5_new[i] = (conv5[i][np.where(np.less(conv5[i] < conv5_i[i]))], np.where(np.less(conv5[i] < conv5_i[i])))
+     #   conv5_new[i] = (conv5[i][np.where(np.less(conv5[i] < conv5_i[i]))], np.where(np.less(conv5[i] < conv5_i[i])))
         fc6_new[i] = (fc6[i][np.where(np.less(fc6[i] < fc6_i[i]) )], np.where(np.less(fc6[i] < fc6_i[i])))
         fc7_new[i] = (fc7[i][np.where(np.less(fc6[i] < fc7_i[i]))], np.where(np.less(fc7[i] < fc7_i[i])))
         fc8_new[i] = (fc8[i][np.where(np.less(fc8[i] < fc8_i[i]) )], np.where(np.less(fc8[i] < fc8_i[i])))
