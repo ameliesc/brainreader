@@ -9,7 +9,7 @@ from regressionridgev2 import LinearRegressor
 
 
 
-def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam", stepsize = 0.000001, name = 'fc6', lmbda = 0.01, epochs = 15):
+def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Adam", stepsize = 0.000001, name = 'fc6', lmbda = 0.01, epochs = 15):
 
     regr_coef  = OrderedDict()
     regr_cost = OrderedDict()
@@ -78,11 +78,11 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     dd.io.save("/data/regression_coefficients_roi%s_%s.h5" % (roi,name), weights_voxel)
     dd.io.save("/data/regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
 
-if __name__ == '__main__':
-    for name in ['fc8','fc7','fc6']:
-        print name + " regression ..."
-        for i in [1,2,6,7]:
-            online_ridge(region = i, stepsize=0.00000001, epochs = 15, name=name)
-        print "Done."
+# if __name__ == '__main__':
+#     for name in ['fc8','fc7','fc6']:
+#         print name + " regression ..."
+#         for i in [1,2,6,7]:
+#             online_ridge(region = i, stepsize=0.00000001, epochs = 15, name=name)
+#         print "Done."
             
 
