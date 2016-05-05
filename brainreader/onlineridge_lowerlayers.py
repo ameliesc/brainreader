@@ -66,8 +66,8 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
                         n += 1
                         if i % 1750 == 0: #reset batch loading, one epoch passed
                             n = 0
-                except KeyboardInterrupt:
-                    break
+            except KeyboardInterrupt:
+                break
 
            
 
