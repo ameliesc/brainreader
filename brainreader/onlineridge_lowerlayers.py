@@ -67,7 +67,7 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
                     if i % 1750 == 0: #reset batch loading, one epoch passed
                         n = 0
                 f_train(x_train[k: k+sample_batch_size,:], y_train[k: k+sample_batch_size, j: j+batch_size])
-                i += sample_batch_sys.getsizeof()
+                i += sample_batch_size
         except KeyboardInterrupt:
             continue
 
