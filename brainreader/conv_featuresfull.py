@@ -59,7 +59,7 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
         regr_x[0] = np.reshape(feat, (feat.shape[1] * feat.shape[2] * feat.shape[3]))
 
         print 'Convolving images up to layer %s ...' % (l_name)
-        for i in range(n * batch, sample_size_end):
+        for i in range(sample_size):
 
             input_im =  im2feat(stimuli_train[i])
             named_features = func(input_im)
