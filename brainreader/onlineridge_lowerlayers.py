@@ -31,7 +31,7 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
     n_epochs = epochs
     lmbda = lmbda
     cost_voxel = np.zeros_like(y_test)
-    feature_map_train= dd.io.load("/data/featuremaps_train_0_%s.h5" % (name))
+    feature_map_train= dd.io.load("/data1/featuremaps_train_0_%s.h5" % (name))
     x_train = np.nan_to_num((feature_map_train-np.mean(feature_map_train, axis=1)[:, None])/np.std(feature_map_train, axis=1)[:, None])
     weights_voxel = np.zeros((x_train.shape[1],y_train.shape[1]))
     j = 0
@@ -61,7 +61,7 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
                     print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
 
                 if k == 0 and i !=0  :
-                    feature_map_train= dd.io.load("/data/featuremaps_train_%s_%s.h5" % (n,name))
+                    feature_map_train= dd.io.load("/data1/featuremaps_train_%s_%s.h5" % (n,name))
                     x_train = np.nan_to_num((feature_map_train-np.mean(feature_map_train, axis=1)[:, None])/np.std(feature_map_train, axis=1)[:, None])
                     n += 1
                     if i % 1750 == 0: #reset batch loading, one epoch passed
@@ -79,12 +79,12 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
         weights_voxel[:,j:j+batch_size] = w[0].get_value()
         j = j + batch_size
     regr_predictions = f_predict(x_test)
-    dd.io.save("regression_coefficients_roi%s_%s.h5" % (roi,name), regr_predictions)
-    dd.io.save("regression_coefficients_roi%s_%s.h5" % (roi,name), weights_voxel)
-    dd.io.save("regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
+    dd.io.save("/data1/regression_coefficients_roi%s_%s.h5" % (roi,name), regr_predictions)
+    dd.io.save("/data1/regression_coefficients_roi%s_%s.h5" % (roi,name), weights_voxel)
+    dd.io.save("/data1/regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
 
 if __name__ == '__main__':
-    for name in ['conv5_2' ,'conv4_2']:
+    for name in ['conv5_4','conv5_2' ,'conv4_4','conv4_2', 'conv3_4' ]:
         for i in [1,2,6,7]:
             print name
             online_ridge(region=i, mini_batch_size = 35, batch_size = 10,method = "Adam", stepsize = 0.000001, name = name, lmbda = 0.1, epochs = 8)
