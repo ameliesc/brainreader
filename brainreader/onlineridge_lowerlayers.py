@@ -87,12 +87,12 @@ if __name__ == '__main__':
     for name in ['conv5_2' ,'conv4_2']:
         for i in [1,2,6,7]:
             print name
-            online_ridge(region=1, mini_batch_size = 35, batch_size = 10,method = "Adam", stepsize = 0.000001, name = 'conv5_1', lmbda = 0.1, epochs = 8)
+            online_ridge(region=i, mini_batch_size = 35, batch_size = 10,method = "Adam", stepsize = 0.000001, name = name, lmbda = 0.1, epochs = 8)
     
 
     for name in ["conv3_2, ",'conv2_2', 'conv1_2']:
         for i in [1,2,6,7]:
-            online_ridge(region=1, mini_batch_size = 35, batch_size = 10,method = "Adam", stepsize = 0.000001, name = 'conv5_1', lmbda = 0.1, epochs = 5)
+            online_ridge(region=i, mini_batch_size = 35, batch_size = 10,method = "Adam", stepsize = 0.000001, name = name, lmbda = 0.1, epochs = 5)
 
    
 

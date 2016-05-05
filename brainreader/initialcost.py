@@ -67,3 +67,10 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
         j = j + batch_size
 
     dd.io.save("/data/regression_cost_init_roi%s_%s.h5" % (roi,name), cost_voxel)
+if __name__ == '__main__':
+for name in ['fc8','fc7','fc6']:
+        print name + " regression ..."
+        for i in [1,2,6,7]:
+            online_ridge(region=i, mini_batch_size = 100, batch_size = 10, method = "Adam", stepsize = 0.00001, name = name, lmbda = 0.01, epochs = 20)
+
+        print "Done."
