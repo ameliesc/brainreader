@@ -10,7 +10,7 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
 
     roi = region
     print "load featuremap for testing.."
-    feature_map_test = dd.io.load("/data/featuremaps_test_%s.h5" % (name))
+    feature_map_test = dd.io.load("/data1/featuremaps_test_%s.h5" % (name))
     print "Done."
     roi = region
     y_train = get_data(response=1, roi = roi)
