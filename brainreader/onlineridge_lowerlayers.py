@@ -83,15 +83,16 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
     dd.io.save("regression_coefficients_roi%s_%s.h5" % (roi,name), weights_voxel)
     dd.io.save("regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
+    for name in ['conv5_2' ,'conv4_2']:
+        for i in [1,2,6,7]:
+            print name
+            online_ridge(region=1, mini_batch_size = 35, batch_size = 10,method = "Adam", stepsize = 0.000001, name = 'conv5_1', lmbda = 0.1, epochs = 5)
     
-#     for name in ["conv4_4, ",'conv4_3','conv4_2','conv4_1']:
-#         for i in xrange(1,7):
-#             print name
-#             online_ridge(region = i, stepsize=0.00000001, epochs = 15, name='conv4_4', mini_batch_size=50, batch_size=10)
-#     for name in ["conv3_4, ",'conv2_2']:
-#         for i in xrange(1,7):
-#             online_ridge(region = i, stepsize=0.00000001, epochs = 15, name='conv3_4', mini_batch_size=50, batch_size=10)
 
-#             online_ridge(region = i, stepsize=0.00000001, epochs = 15, name='conv2_2', mini_batch_size=50, batch_size=10)#
+    for name in ["conv3_2, ",'conv2_2', 'conv1_2']:
+        for i in [1,2,6,7]:
+            online_ridge(region=1, mini_batch_size = 35, batch_size = 10,method = "Adam", stepsize = 0.000001, name = 'conv5_1', lmbda = 0.1, epochs = 5)
+
+   
 
