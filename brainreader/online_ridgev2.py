@@ -16,10 +16,10 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
 
 
     print "load featuremap for training.."
-    feature_map_batch1= dd.io.load("featuremaps_train_%s.h5" % (name))
+    feature_map_batch1= dd.io.load("/data/featuremaps_train_%s.h5" % (name))
 
     print "load featuremap for testing.."
-    feature_map_test = dd.io.load("featuremaps_test_%s.h5" % (name))
+    feature_map_test = dd.io.load("/data/featuremaps_test_%s.h5" % (name))
     print "Done."
     roi = region
     y_train = get_data(response=1, roi = roi)
@@ -74,22 +74,15 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
         weights_voxel[:,j:j+batch_size] = w[0].get_value()
         j = j + batch_size
     regr_predictions = f_predict(x_test)
-    dd.io.save("regression_coefficients2_roi%s_%s.h5" % (roi,name), regr_predictions)
-    dd.io.save("regression_coefficients2_roi%s_%s.h5" % (roi,name), weights_voxel)
-    dd.io.save("regression_cost2_roi%s_%s.h5" % (roi,name), cost_voxel)
+    dd.io.save("/data/regression_predictions_roi%s_%s.h5" % (roi,name), regr_predictions)
+    dd.io.save("/data/regression_coefficients_roi%s_%s.h5" % (roi,name), weights_voxel)
+    dd.io.save("/data/regression_cost_roi%s_%s.h5" % (roi,name), cost_voxel)
 
 if __name__ == '__main__':
     for name in ['fc8','fc7','fc6']:
         print name + " regression ..."
-        for i in xrange(1,8):
+        for i in [1,2,6,7]:
             online_ridge(region = i, stepsize=0.00000001, epochs = 15, name=name)
         print "Done."
-
-    for name in ['conv5_4','conv5_3','conv5_2','conv5_1']:
-        print name + " regression ..."
-        for i in xrange(1,8):
-            online_ridge(region = i, stepsize=0.00000001, epochs = 15, name=name)
-        print "Done."
-   
             
 
