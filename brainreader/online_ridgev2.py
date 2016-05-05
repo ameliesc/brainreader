@@ -16,12 +16,8 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
 
 
     print "load featuremap for training.."
-    feature_map_batch1= dd.io.load("featuremaps_train_0_%s.h5" % (name))
-    feature_map_batch2= dd.io.load("featuremaps_train_1_%s.h5" % (name))
-    feature_map_batch3= dd.io.load("featuremaps_train_2_%s.h5" % (name))
-    feature_map_batch4= dd.io.load("featuremaps_train_3_%s.h5" % (name))
-    feature_map_batch5= dd.io.load("featuremaps_train_4_%s.h5" % (name))
-    feature_map_train = np.concatenate((feature_map_batch1,feature_map_batch2,feature_map_batch3,feature_map_batch4, feature_map_batch5), axis = 0)
+    feature_map_batch1= dd.io.load("featuremaps_train_%s.h5" % (name))
+
     print "load featuremap for testing.."
     feature_map_test = dd.io.load("featuremaps_test_%s.h5" % (name))
     print "Done."
@@ -51,7 +47,7 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
     f_predict = predictor.predict.compile()
     f_cost = predictor.voxel_cost.compile()
         
-    while j < y_train.shape[1]:
+    while j < y_train.shape[1]:  # batches for targest
         f_train = predictor.train.compile()
         f_predict = predictor.predict.compile()
         f_cost = predictor.voxel_cost.compile()
@@ -61,12 +57,13 @@ def online_ridge(region, mini_batch_size = 100, batch_size = 10, method = "Adam"
             break
             
            
-        while i < n_training_samples*n_epochs+1:
+        while i < n_training_samples*n_epochs+1: # training sample batched
+            
 
-                #if i % score_report_period == 0:
-                 #   out = f_predict(x_test)
-                  #  test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
-                   # print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
+            if i % score_report_period == 0:
+                out = f_predict(x_test)
+                test_cost = ((y_test[:,j : j+ batch_size] - out)**2).sum(axis = 1).mean(axis=0)
+                print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
 
             f_train(x_train[i: i+sample_batch_size,:], y_train[i: i+sample_batch_size, j: j+batch_size])
             i += sample_batch_size
@@ -85,13 +82,14 @@ if __name__ == '__main__':
     for name in ['fc8','fc7','fc6']:
         print name + " regression ..."
         for i in xrange(1,8):
-            online_ridge(region = i, stepsize=0.000001, epochs = 15, name=name)
+            online_ridge(region = i, stepsize=0.00000001, epochs = 15, name=name)
         print "Done."
 
     for name in ['conv5_4','conv5_3','conv5_2','conv5_1']:
         print name + " regression ..."
         for i in xrange(1,8):
-            online_ridge(region = i, stepsize=0.0000001, epochs = 15, name=name)
+            online_ridge(region = i, stepsize=0.00000001, epochs = 15, name=name)
         print "Done."
+   
             
 

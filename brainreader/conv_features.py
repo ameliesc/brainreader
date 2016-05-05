@@ -40,8 +40,7 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
     layer_names = ['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2',
                    'conv3_1', 'conv3_2',  'conv3_3',  'conv3_4', 'conv4_1',
                    'conv4_2', 'conv4_3',  'conv4_4', 'conv5_1',
-                   'conv5_2',  'conv5_3',  'conv5_4',  'fc6',  'fc7',
-                   'fc8']
+                   'conv5_2',  'conv5_3',  'conv5_4'']
 
     stim = im2feat(stimuli_train[0])
     input_im = stim
@@ -54,7 +53,7 @@ def get_featuremaps(sample_size=1750, layer_name=None, data_set='train'):
         net = get_vgg_net(up_to_layer = l_name)
         func = net.get_named_layer_activations.compile()
         n = 0
-        while n < 5:
+        while n < 10:
             print 'At batch %s' %(n)
             sample_size_end = n * batch + batch
         
