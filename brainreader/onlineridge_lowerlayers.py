@@ -65,7 +65,7 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
                         x_train = np.nan_to_num((feature_map_train-np.mean(feature_map_train, axis=1)[:, None])/np.std(feature_map_train, axis=1)[:, None])
                         n += 1
                         if i % 1750 == 0: #reset batch loading, one epoch passed
-                        n = 0
+                            n = 0
                 except KeyboardInterrupt:
                     break
 
