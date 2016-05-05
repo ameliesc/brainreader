@@ -58,7 +58,6 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
                 print 'Test-Cost at epoch %s: %s' % (float(i)/n_training_samples, test_cost)
 
             if k == 0 and i !=0  :
-                print "loading batch %s" % (n)
                 feature_map_train= dd.io.load("/data/featuremaps_train_%s_%s.h5" % (n,name))
                 x_train = np.nan_to_num((feature_map_train-np.mean(feature_map_train, axis=1)[:, None])/np.std(feature_map_train, axis=1)[:, None])
                 n += 1
@@ -92,3 +91,4 @@ def online_ridge(region=1, mini_batch_size = 100, batch_size = 10, method = "Ada
 
 #             online_ridge(region = i, stepsize=0.00000001, epochs = 15, name='conv2_2', mini_batch_size=50, batch_size=10)
 
+#conv 5_5 :
