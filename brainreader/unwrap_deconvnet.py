@@ -17,9 +17,8 @@ def get_deconv( switches,network_params = None,from_layer = None, force_shared_p
                 w_orig = struct[2][0, 0] 
                 w = w_orig.T.swapaxes(2, 3)
                 b = struct[2][0, 1][:, 0]
-                padding = 0 if layer_name.startswith('fc') else 1 if layer_name.startswith('conv') else bad_value(layer_name)
+                padding = 'full' if layer_name.startswith('fc') else 1 if layer_name.startswith('conv') else bad_value(layer_name)
                 layer = Deconv(w, b, force_shared_parameters=force_shared_parameters, border_mode=padding, filter_flip=True)
-                    
             elif layer_type == 'relu':
                 layer = Nonlinearity(layer_type)
             elif layer_type == 'unpo':
