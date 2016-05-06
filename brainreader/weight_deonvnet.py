@@ -58,7 +58,7 @@ def feat2im(feat):
     decentered_rgb_im = (bgr_im + np.array([103.939, 116.779, 123.68]))[:, :, ::-1]
     return decentered_rgb_im
 
-def conv_and_deconv(layername, n, , voxel_index):
+def conv_and_deconv(layername, n, voxel_index):
 
     #raw_content_image = get_image('trump', size=(224, 224))  # (im_size_y, im_size_x, n_colours)
     #input_im = im2feat(raw_content_image)
