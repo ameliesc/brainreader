@@ -133,7 +133,7 @@ def layer_images():
                     deconv = load_conv_and_deconv()
                     net = get_deconv(switch_dict, network_params=deconv, from_layer= layername)
                     func = net.compile()
-                    image_reconstruct = func(features)
+                    image_reconstructed = func(features)
                     raw_content_image = feat2im(im2feat(stimuli_test[k]))
                     plt.figure(figsize = (8,3))
                     plt.subplot(2, 1, 1)
