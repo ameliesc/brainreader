@@ -56,7 +56,7 @@ def feat2im(feat):
     decentered_rgb_im = (bgr_im + np.array([103.939, 116.779, 123.68]))[:, :, ::-1]
     return decentered_rgb_im
 
-def convolutuion(layername, n):
+def conv_and_deconv(layername, n):
 
     #raw_content_image = get_image('trump', size=(224, 224))  # (im_size_y, im_size_x, n_colours)
     #input_im = im2feat(raw_content_image)
@@ -76,15 +76,15 @@ def convolutuion(layername, n):
             switch_dict[name] = named_features[name]
 
     features =  named_features[layername+'_layer']
-    return features, stimuli_test[0]
+    return features, stimuli_test[0], switch_dict
 
-def deconvolution(features, layername,voxel_index,layershape,n):
+
     weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (n, layername))
-    print weights.shape
-    w_times_feat = features[0,:,0,0] * weights[:, voxel_index]
+    print w
+    w_times_feat = features * np.reshape(weights[:, voxel_index],features.shape)
     print features.shape
     print w_times_feat.shape
-    features[0,:,0,0] = w_times_feat
+    features = w_times_feat
     deconv = load_conv_and_deconv()
     net = get_deconv(switch_dict, network_params=deconv, from_layer= layername)
     func = net.compile()
@@ -111,8 +111,7 @@ def layer_images():
             index_1 = np.where(cost < 10)
             index = index[index_1]
             for j in range(0,index.shape[0]):
-                features, raw_content_image = convolutuion(layername,i)
-                image_reconstructed = deconvolution(features, layername,index[j], features.shape,i)
+                
                 plt.figure(j)
                 plt.subplot(2, 1, 1)
                 plt.imshow(raw_content_image, cmap='Greys_r')
