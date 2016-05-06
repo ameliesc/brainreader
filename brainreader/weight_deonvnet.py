@@ -16,6 +16,9 @@ from sklearn import linear_model
 from scipy.io import loadmat
 from matplotlib import pyplot as plt
 import deepdish as dd
+from matplotlib.backends.backend_pdf import PdfPages
+from analyse import filtervoxels
+
 def im2feat(im):
     """
     :param im: A (size_y, size_x, 3) array representing a RGB image on a [0, 255] scale
@@ -33,8 +36,7 @@ def im2feat(im):
     image that's ready to feed into VGGNet
 cat
     """
-    im = imresize(
-        im, (224, 224))  # update to vggnet requirements ;incorporate normalize
+    im = imresize(im, (224, 224))  # update to vggnet requirements ;incorporate normalize
     im = (np.dstack((im, im, im)))
     centered_bgr_im = im[:, :, ::-1] - np.array([103.939, 116.779, 123.68])
     feature_map_im = np.rollaxis(centered_bgr_im, 2, 0)[None, :, :, :]
@@ -55,16 +57,16 @@ def feat2im(feat):
     decentered_rgb_im = (bgr_im + np.array([103.939, 116.779, 123.68]))[:, :, ::-1]
     return decentered_rgb_im
 
-def demo_brainreader(layername, n, voxel_index, layershape):
+def convolutuion(layername, n):
 
     #raw_content_image = get_image('trump', size=(224, 224))  # (im_size_y, im_size_x, n_colours)
     #input_im = im2feat(raw_content_image)
    
     net = get_vgg_net(up_to_layer = layername)
     func = net.get_named_layer_activations.compile()
-    stimuli_train = get_data(data='test')
+    stimuli_test = get_data(data='test')
     input_im = np.empty([1, 3, 224, 224])
-    input_im = im2feat(stimuli_train[0])
+    input_im = im2feat(stimuli_test[0])
     print input_im.shape
     named_features = func(input_im)
 
@@ -74,27 +76,45 @@ def demo_brainreader(layername, n, voxel_index, layershape):
         if 'switch' in name:
             switch_dict[name] = named_features[name]
 
-    weights = dd.io.load('regression_coefficients_roi%s_%s.h5' % (n, layername))
     features =  named_features[layername+'_layer']
+    return features, stimuli_test[0]
+
+def deconvolution(layername,voxel_index,layershape):
+    weights = dd.io.load('regression_coefficients_roi%s_%s.h5' % (n, layername))
     w_times_feat = features[0,:,0,0] * np.reshape(weights[:, voxel_index], layershape)
     features[0,:,0,0] = w_times_feat
     deconv = load_conv_and_deconv()
     net = get_deconv(switch_dict, network_params=deconv, from_layer= layername)
     func = net.compile()
     image_reconstruct = func(features)
-    maxval = np.amax(image_reconstruct, axis = 1)
-    zeroed = np.asarray(image_reconstruct)
-    indices = zeroed < maxval
-    zeroed[indices] = 0
+    return image_reconstruct
+    #maxval = np.amax(image_reconstruct, axis = 1)
+    #zeroed = np.asarray(image_reconstruct)
+    #indices = zeroed < maxval
+    #zeroed[indices] = 0
     #zeroed
      # Plot
 
-    plt.subplot(2, 1, 1)
-    plt.imshow(raw_content_image)
-    plt.title('Image')
-    plt.subplot(2, 1, 2)
-     # plt.imshow(put_data_in_grid(named_features[layer][0]),
-     #cmap='gray', interpolation = 'nearest')
-    plt.imshow(feat2im(zeroed))
-    plt.title('Features')
-    plt.show()
+   
+
+
+    
+def layer_images():
+    for layername in ['fc6', 'fc7', 'fc8']:
+        for  i in [1,2,6,7]:
+            pp = PdfPages('%s_%s.pdf' % (layername, i))
+            tup  = analyse(layername,n = i)
+            cost = tup[0]
+            index = tup[1]
+            for j in range(0,index.shape[0]):
+                features, raw_content_image = convolutuion(layername,i)
+                image_reconstructed = deconvolution(layername,index[j], features.shape)
+                plt.figure(j)
+                plt.subplot(2, 1, 1)
+                plt.imshow(raw_content_image, cmap='Greys_r')
+                plt.title('Original Image')
+                plt.subplot(2, 1, 2)
+                plt.imshow(image_reconstructed, cmap='Greys_r')
+                plt.title('Reconstuction of voxel acitvation')
+                pp.savefig(feat2im(image_reconstruct))
+            pp.close()
