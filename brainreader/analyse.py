@@ -36,7 +36,7 @@ def filtercost(dic):
     return index
    
 
-def mincost():
+def mincost(roi):
     layers = OrderedDict()
     for layer in ['fc6', 'fc7', 'fc8']:
         dic = filtervoxels(layer, n =roi)
@@ -44,7 +44,7 @@ def mincost():
         layers[layer] = min(dic[1][0][index])
     return layers
         
-def avgcost():  
+def avgcost(roi):  
     layers = OrderedDict()
     for layer in ['fc6', 'fc7', 'fc8']:
         dic = filtervoxels(layer, n =roi)
