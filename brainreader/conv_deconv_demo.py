@@ -113,5 +113,5 @@ def demo_brainreader(layername):
     plt.show()
     #plt.imshow(feat2im(input_im))
     #plt.title('Features')
-    plt.savefig("test1.png")
+    #plt.savefig("test2.png")
 
