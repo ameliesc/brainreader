@@ -162,7 +162,7 @@ def layer_images():
                     features = w_times_feat
                     image_reconstructed = deconv(features)
                     raw_content_image = feat2im(im2feat(stimuli_test[k]))
-                    plt.figure(figsize = (8,3))
+                    plt.figure()
                     plt.subplot(2, 1, 1)
                     plt.imshow(raw_content_image, cmap='Greys_r')
                     plt.title('Original Image')
