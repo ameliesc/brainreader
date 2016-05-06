@@ -43,7 +43,7 @@ def mincost(roi):
         
         index = filtercost(dic)
         cost = dd.io.load('/data/regression_cost_roi%s_%s.h5' % (roi,layer))
-        layers[layer] = min(cost[index])
+        layers[layer] = min(cost[0][index])
     return layers
         
 def avgcost(roi):  
@@ -52,7 +52,7 @@ def avgcost(roi):
         dic = filtervoxels(layer, n =roi)
         index = filtercost(dic)
         cost = dd.io.load('/data/regression_cost_roi%s_%s.h5' % (roi,layer))
-        layers[layer] = sum(cost[index])/len(cost[index])
+        layers[layer] = sum(cost[0][index])/len(cost[0][index])
     return layers
         
 
