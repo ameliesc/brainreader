@@ -109,9 +109,9 @@ def demo_brainreader(layername):
      # plt.imshow(put_data_in_grid(named_features[layer][0]),
      #cmap='gray', interpolation = 'nearest')
     plt.imshow(feat2im(zeroed))
-    plt.title('Features')
-    plt.show()
-    plt.imshow(feat2im(input_im))
-    plt.title('Features')
+    #plt.title('Features')
+    #plt.show()
+    #plt.imshow(feat2im(input_im))
+    #plt.title('Features')
     plt.savefig("test1.png")
 
