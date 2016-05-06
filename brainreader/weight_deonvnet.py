@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 from pretrained_networks import get_vgg_net
 from unwrap_deconvnet import get_deconv
 from makedeconvnet import load_conv_and_deconv
@@ -61,7 +63,7 @@ def conv_and_deconv(layername, n):
     #raw_content_image = get_image('trump', size=(224, 224))  # (im_size_y, im_size_x, n_colours)
     #input_im = im2feat(raw_content_image)
    
-    net = get_vgg_net(up_to_layer = layername)
+    net = get_vgg_net(up_to_layer = layername, voxel_index)
     func = net.get_named_layer_activations.compile()
     stimuli_test = get_data(data='test')
     input_im = np.empty([1, 3, 224, 224])
@@ -111,7 +113,7 @@ def layer_images():
             index_1 = np.where(cost < 10)
             index = index[index_1]
             for j in range(0,index.shape[0]):
-                
+                image_reconstructed = conv_and_deconv(layername,i,j)
                 plt.figure(j)
                 plt.subplot(2, 1, 1)
                 plt.imshow(raw_content_image, cmap='Greys_r')
