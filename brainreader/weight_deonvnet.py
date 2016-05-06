@@ -141,41 +141,33 @@ def layer_images():
             plt.title('Features')
             plt.show()
             
-            # raw_content_image = feat2im(im2feat(stimuli_test[0]))
-            # plt.figure(figsize = (8,3))
-            # plt.subplot(2, 1, 1)
-            # plt.imshow(raw_content_image, cmap='Greys_r')
-            # plt.title('Original Image')
-            # plt.subplot(2, 1, 2)
-            # plt.imshow(feat2im(image_reconstructed), cmap='Greys_r')
-            # plt.title('Reconstuction of voxel %s' % (index[0]))
-            # pp.savefig()
-            # for j in index[1:]:
-            #     for k in range(1,120): 
-            #         stimuli_test = get_data(data='test')
-            #         input_im = np.empty([1, 3, 224, 224])
-            #         input_im = im2feat(stimuli_test[k])
-            #         named_features = conv(input_im)
-
-            #         switch_dict = OrderedDict()
-            #         for name in named_features:
-
-            #             if 'switch' in name:
-            #                 switch_dict[name] = named_features[name]
-
-            #         features =  named_features[layername+'_layer']
-
-            #         weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (i, layername))
-            #         w_times_feat = features * np.reshape(weights[:, j],features.shape)
-            #         features = w_times_feat
-            #         image_reconstructed = deconv(features)
-            #         raw_content_image = feat2im(im2feat(stimuli_test[k]))
-            #         plt.figure()
-            #         plt.subplot(2, 1, 1)
-            #         plt.imshow(raw_content_image, cmap='Greys_r')
-            #         plt.title('Original Image')
-            #         plt.subplot(2, 1, 2)
-            #         plt.imshow(feat2im(image_reconstructed), cmap='Greys_r')
-            #         plt.title('Reconstuction of voxel %s' % (j))
-            #         pp.savefig()
-            # pp.close()
+            raw_content_image = feat2im(im2feat(stimuli_test[0]))
+            plt.figure(figsize = (8,3))
+            plt.subplot(2, 1, 1)
+            plt.imshow(raw_content_image, cmap='Greys_r')
+            plt.title('Original Image')
+            plt.subplot(2, 1, 2)
+            plt.imshow(feat2im(image_reconstructed), cmap='Greys_r')
+            plt.title('Reconstuction of voxel %s' % (index[0]))
+            pp.savefig()
+            for j in index[1:]:
+                for k in range(1,120): 
+                    stimuli_test = get_data(data='test')
+                    input_im = np.empty([1, 3, 224, 224])
+                    input_im = im2feat(stimuli_test[k])
+                    named_features = conv(input_im)
+                    features =  named_features[layername+'_layer']
+                    weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (i, layername)
+                    w_times_feat = features * np.reshape(weights[:, j],features.shape)
+                    features = w_times_feat
+                    image_reconstructed = deconv(features)
+                    raw_content_image = feat2im(im2feat(stimuli_test[k]))
+                    plt.figure()
+                    plt.subplot(2, 1, 1)
+                    plt.imshow(feat2im(input_im))
+                    plt.title('Original Image')
+                    plt.subplot(2, 1, 2)
+                    plt.imshow(feat2im(image_reconstructed))
+                    plt.title('Reconstuction of voxel %s' % (j))
+                    pp.savefig()
+            pp.close()
