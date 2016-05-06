@@ -113,7 +113,7 @@ def layer_images():
             conv = net.get_named_layer_activations.compile()
             stimuli_test = get_data(data='test')
             input_im = np.empty([1, 3, 224, 224])
-            input_im = im2feat(stimuli_test[k])
+            input_im = im2feat(stimuli_test[0])
             print input_im.shape
             named_features = conv(input_im)
             
@@ -146,7 +146,6 @@ def layer_images():
                     stimuli_test = get_data(data='test')
                     input_im = np.empty([1, 3, 224, 224])
                     input_im = im2feat(stimuli_test[k])
-                    print input_im.shape
                     named_features = conv(input_im)
 
                     switch_dict = OrderedDict()
