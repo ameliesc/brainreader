@@ -25,44 +25,32 @@ def filtervoxels(layer_name, n = 1):
     layer_init = dd.io.load('/data/regression_cost_init_roi%s_%s.h5' % (n,layer_name))
     layer_new = OrderedDict()
     for i in range (1,120): #   conv5_new[i] = (conv5[i][np.where(np.less(conv5[i] < conv5_i[i]))], np.where(np.less(conv5[i] < conv5_i[i])))
-        layer_new[i] = (layer[i][np.where(np.less(layer[i] , layer_init[i]) )] , np.where(np.less(layer[i] , layer_init[i])))
+        layer_new[i] =  (layer[i][np.where(np.less(layer[i] , layer_init[i]) )],  np.where(np.less(layer[i] ,layer_init[i])))x
     return layer_new
+
+def filtercost(dic):
+    cost = dic[1][0]
+    index = dic[1][1][0]
+    index_1 = np.where(cost < 10)
+    index = index[index_1]
+    return index
    
 
-def count_layers(region):
-    region_most = OrderedDict()
-    for n in range(1,7):
-        voxel_layer = region[n]
-        pair = OrderedDict()
-        fc6 = 0
-        conv5 = 0
-        fc7 = 0
-        fc8 = 0
-        for i in range(0, len(voxel_layer)):
-            if voxel_layer[i] ==  'conv5':
-                conv5 += 1
-                
-            elif voxel_layer[i] ==  'fc6':
-                fc6 += 1
-            elif voxel_layer[i] ==  'fc7':
-                fc7 += 1
-            else :
-                fc8 += 1
-        print fc7
-        print fc8
-        print max(conv5,fc6,fc7,fc8)
-        if max(conv5,fc6,fc7,fc8) == conv5:
-            region_most[n] = 'conv5'
-        elif  max(conv5,fc6,fc7,fc8) == fc6:
-            region_most[n] = 'fc6'
-        elif  max(conv5,fc6,fc7,fc8) == fc7:
-            region_most[n] = 'fc7'
-
-        elif max(conv5,fc6,fc7,fc8) == fc8:
-            region_most[n] = 'fc8'
-    return region_most
-            
+def mincost():
+    layers = OrderedDict()
+    for layer in ['fc6', 'fc7', 'fc8']:
+        dic = filtervoxels(layer, n =roi)
+        index = filtercost(dic)
+        layers[layer] = min(dic[1][0][index])
+    return layers
         
+def avgcost():  
+    layers = OrderedDict()
+    for layer in ['fc6', 'fc7', 'fc8']:
+        dic = filtervoxels(layer, n =roi)
+        index = filtercost(dic)
+        layers[layer] = sum(dic[1][0][index])/len(dic[1][0][index])
+    return layers
         
 
 
