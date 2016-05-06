@@ -78,8 +78,6 @@ def conv_and_deconv(layername, n, voxel_index):
             switch_dict[name] = named_features[name]
 
     features =  named_features[layername+'_layer']
-    return features, stimuli_test[0], switch_dict
-
 
     weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (n, layername))
     print w
@@ -113,7 +111,7 @@ def layer_images():
             index_1 = np.where(cost < 10)
             index = index[index_1]
             for j in range(0,index.shape[0]):
-                image_reconstructed, raw_content_image= conv_and_deconv(layername,i,j)
+                image_reconstructed, raw_content_image = conv_and_deconv(layername,i,j)
                 plt.figure(j)
                 plt.subplot(2, 1, 1)
                 plt.imshow(raw_content_image, cmap='Greys_r')
