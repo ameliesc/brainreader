@@ -86,7 +86,8 @@ def conv_and_deconv(layername, n, voxel_index):
     net = get_deconv(switch_dict, network_params=deconv, from_layer= layername)
     func = net.compile()
     image_reconstruct = func(features)
-    return image_reconstruct, stimuli_test[0]
+    raw_content_image = feat2im(im2feat(stimuli_test[0]))
+    return image_reconstruct, raw_content_image
     #maxval = np.amax(image_reconstruct, axis = 1)
     #zeroed = np.asarray(image_reconstruct)
     #indices = zeroed < maxval
