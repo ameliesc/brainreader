@@ -102,9 +102,9 @@ def layer_images():
     for layername in ['fc6', 'fc7', 'fc8']:
         for  i in [1,2,6,7]:
             pp = PdfPages('%s_%s.pdf' % (layername, i))
-            tup  = filtervoxels(layername,n = i)
-            cost = tup[0]
-            index = tup[1]
+            dic  = filtervoxels(layername,n = i)
+            cost = dic[1][0]
+            index = dic[1][1][0]
             for j in range(0,index.shape[0]):
                 features, raw_content_image = convolutuion(layername,i)
                 image_reconstructed = deconvolution(layername,index[j], features.shape)
