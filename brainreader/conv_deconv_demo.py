@@ -96,11 +96,11 @@ def demo_brainreader(layername):
     net = get_deconv(switch_dict, network_params=deconv_net, from_layer= layername)
     deconv = net.compile()
     image_reconstruct = deconv(named_features[layername+'_layer'])
-    #maxval = np.amax(image_reconstruct, axis = 1)
-    #zeroed = np.asarray(image_reconstruct)
-    #indices = zeroed < maxval
-    #zeroed[indices] = 0
-    #zeroed
+    maxval = np.amax(image_reconstruct, axis = 1)
+    zeroed = np.asarray(image_reconstruct)
+    indices = zeroed < maxval
+    zeroed[indices] = 0
+    zeroed
      # Plot
     pp = PdfPages('%s_wo_weights.pdf' %(layername))
     plt.subplot(2, 1, 1)
@@ -119,14 +119,19 @@ def demo_brainreader(layername):
         raw_content_image = feat2im(im2feat(stimuli_test[i]))
         named_features = conv(input_im)
         image_reconstruct = deconv(named_features[layername+'_layer'])
-        pp = PdfPages('%s_wo_weights.pdf' %(layername))
+        plt.figure()
         plt.subplot(2, 1, 1)
         plt.imshow(raw_content_image)
         plt.title('Image')
         plt.subplot(2, 1, 2)
         # plt.imshow(put_data_in_grid(named_features[layer][0]),
         #cmap='gray', interpolation = 'nearest')
-        plt.imshow(feat2im(image_reconstruct))
+        maxval = np.amax(image_reconstruct, axis = 1)
+        zeroed = np.asarray(image_reconstruct)
+        indices = zeroed < maxval
+        zeroed[indices] = 0
+        zeroed
+        plt.imshow(feat2im(zeroed))
         plt.title('Features')
         plt.show()
         pp.savefig()
