@@ -157,7 +157,7 @@ def layer_images():
                     input_im = im2feat(stimuli_test[k])
                     named_features = conv(input_im)
                     features =  named_features[layername+'_layer']
-                    weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (i, layername)
+                    weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (i, layername))
                     w_times_feat = features * np.reshape(weights[:, j],features.shape)
                     features = w_times_feat
                     image_reconstructed = deconv(features)
