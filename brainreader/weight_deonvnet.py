@@ -101,7 +101,7 @@ def conv_and_deconv(layername, n, voxel_index):
     
 def layer_images():
     for layername in ['fc6', 'fc7', 'fc8']:
-         for  i in [1,2,6,7]:
+         for  i in [7,6,2,1]:
             print "reconstructing image for layer %s and region %s" % (layername, i)
             pp = PdfPages('%s_%s.pdf' % (layername, i))
             dic  = filtervoxels(layername,n = i)
@@ -112,35 +112,35 @@ def layer_images():
             net = get_vgg_net(up_to_layer = layername)
             func = net.get_named_layer_activations.compile()
             for j in range(0,index.shape[0]):
-                 
-                stimuli_test = get_data(data='test')
-                input_im = np.empty([1, 3, 224, 224])
-                input_im = im2feat(stimuli_test[0])
-                print input_im.shape
-                named_features = func(input_im)
-                
-                switch_dict = OrderedDict()
-                for name in named_features:
-                     
-                    if 'switch' in name:
-                        switch_dict[name] = named_features[name]
-                         
-                features =  named_features[layername+'_layer']
-                
-                weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (i, layername))
-                w_times_feat = features * np.reshape(weights[:, j],features.shape)
-                features = w_times_feat
-                deconv = load_conv_and_deconv()
-                net = get_deconv(switch_dict, network_params=deconv, from_layer= layername)
-                func = net.compile()
-                image_reconstruct = func(features)
-                raw_content_image = feat2im(im2feat(stimuli_test[0]))
-                plt.figure(j)
-                plt.subplot(2, 1, 1)
-                plt.imshow(raw_content_image, cmap='Greys_r')
-                plt.title('Original Image')
-                plt.subplot(2, 1, 2)
-                plt.imshow(feat2im(image_reconstructed), cmap='Greys_r')
-                plt.title('Reconstuction of voxel acitvation')
-                pp.savefig()
+                for k in range(0,120): 
+                    stimuli_test = get_data(data='test')
+                    input_im = np.empty([1, 3, 224, 224])
+                    input_im = im2feat(stimuli_test[k])
+                    print input_im.shape
+                    named_features = func(input_im)
+
+                    switch_dict = OrderedDict()
+                    for name in named_features:
+
+                        if 'switch' in name:
+                            switch_dict[name] = named_features[name]
+
+                    features =  named_features[layername+'_layer']
+
+                    weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (i, layername))
+                    w_times_feat = features * np.reshape(weights[:, j],features.shape)
+                    features = w_times_feat
+                    deconv = load_conv_and_deconv()
+                    net = get_deconv(switch_dict, network_params=deconv, from_layer= layername)
+                    func = net.compile()
+                    image_reconstruct = func(features)
+                    raw_content_image = feat2im(im2feat(stimuli_test[k]))
+                    plt.figure(figsize = (8,3))
+                    plt.subplot(2, 1, 1)
+                    plt.imshow(raw_content_image, cmap='Greys_r')
+                    plt.title('Original Image')
+                    plt.subplot(2, 1, 2)
+                    plt.imshow(feat2im(image_reconstructed), cmap='Greys_r')
+                    plt.title('Reconstuction of voxel %s' % (j))
+                    pp.savefig()
             pp.close()
