@@ -32,7 +32,8 @@ class Deconv(object):
             default is 'valid'.  See theano.tensor.nnet.conv2d docstring for details.
         """
         w = np.swapaxes(w,0,1)[:, :, ::-1, ::-1] # transpose filters for deconv according to zeiler
-        self.w = create_shared_variable(w) if force_shared_parameters else tt.constant(w) #same as conv just with 
+        self.w = create_shared_variable(w) if force_shared_parameters else tt.constant(w) #same as conv just with
+        b = np.swapaxes(b,0,1)[:, :, ::-1, ::-1]
         self.b = create_shared_variable(b) if force_shared_parameters else tt.constant(b)
         self.border_mode = border_mode
         self.filter_flip = filter_flip
