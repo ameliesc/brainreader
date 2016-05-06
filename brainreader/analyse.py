@@ -16,27 +16,17 @@ def arrange():
         regions_coef[n] = coef
         dd.io.save('region_coef.h5', regions_coef)
 
-def filtervoxels(n = 1):
+def filtervoxels(layer_name, n = 1):
    
-    print "Comparing layers in regions %s" % (n)
-    #conv5 = dd.io.load('/data/regression_cost_roi%s_conv5_1.h5' % (n) )
-    fc6 = dd.io.load('/data/regression_cost_roi%s_fc6.h5' % (n) )
-    fc7 = dd.io.load('/data/regression_cost_roi%s_fc7.h5' % (n) )
-    fc8 = dd.io.load('/data/regression_cost_roi%s_fc8.h5' % (n) )
-    #conv5_i = dd.io.load('/data/regression_cost_init_roi%s_conv5_1.h5' % (n) )
-    fc6_i = dd.io.load('/data/regression_cost_init_roi%s_fc6.h5' % (n) )
-    fc7_i = dd.io.load('/data/regression_cost_init_roi%s_fc7.h5' % (n) )
-    fc8_i = dd.io.load('/data/regression_cost_init_roi%s_fc8.h5' % (n) )
-    conv5_new = OrderedDict()
-    fc6_new = OrderedDict()
-    fc7_new = OrderedDict()
-    fc8_new = OrderedDict()
-    for i in range (1,120):
-     #   conv5_new[i] = (conv5[i][np.where(np.less(conv5[i] < conv5_i[i]))], np.where(np.less(conv5[i] < conv5_i[i])))
-        fc6_new[i] = (fc6[i][np.where(np.less(fc6[i] , fc6_i[i]) )], np.where(np.less(fc6[i] , fc6_i[i])))
-        fc7_new[i] = (fc7[i][np.where(np.less(fc7[i] , fc7_i[i]))], np.where(np.less(fc7[i] , fc7_i[i])))
-        fc8_new[i] = (fc8[i][np.where(np.less(fc8[i] , fc8_i[i]) )], np.where(np.less(fc8[i] , fc8_i[i])))
-    return conv5_new,fc6_new, fc7_new,fc8_new
+    print "Filtering voxels in layer %s in regions %s" % (layer_name,n)
+ 
+    layer = dd.io.load('/data/regression_cost_roi%s_%s.h5' % (n,layer_name))
+   
+    layer_init = dd.io.load('/data/regression_cost_init_roi%s_%s.h5' % (n,layer_name))
+    layer_new = OrderedDict()
+    for i in range (1,120): #   conv5_new[i] = (conv5[i][np.where(np.less(conv5[i] < conv5_i[i]))], np.where(np.less(conv5[i] < conv5_i[i])))
+        layer_new[i] = (fc6[i][np.where(np.less(layer[i] , layer_init[i]) )], np.where(np.less(fc6[i] , layer_init[i])))
+    return layer_new
    
 
 def count_layers(region):
