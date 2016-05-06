@@ -78,7 +78,7 @@ def convolutuion(layername, n):
     features =  named_features[layername+'_layer']
     return features, stimuli_test[0]
 
-def deconvolution(layername,voxel_index,layershape):
+def deconvolution(layername,voxel_index,layershape,n):
     weights = dd.io.load('regression_coefficients_roi%s_%s.h5' % (n, layername))
     w_times_feat = features[0,:,0,0] * np.reshape(weights[:, voxel_index], layershape)
     features[0,:,0,0] = w_times_feat
@@ -104,10 +104,10 @@ def layer_images():
             pp = PdfPages('%s_%s.pdf' % (layername, i))
             dic  = filtervoxels(layername,n = i)
             cost = dic[1][0]
-            index = tup[1][1][0]
+            index = dic[1][1][0]
             for j in range(0,index.shape[0]):
                 features, raw_content_image = convolutuion(layername,i)
-                image_reconstructed = deconvolution(layername,index[j], features.shape)
+                image_reconstructed = deconvolution(layername,index[j], features.shape,i)
                 plt.figure(j)
                 plt.subplot(2, 1, 1)
                 plt.imshow(raw_content_image, cmap='Greys_r')
