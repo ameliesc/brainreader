@@ -109,6 +109,8 @@ def layer_images():
             index = dic[1][1][0]
             index_1 = np.where(cost < 10)
             index = index[index_1]
+            if len(index) == 0:
+                continue
             net = get_vgg_net(up_to_layer = layername)
             conv = net.get_named_layer_activations.compile()
             stimuli_test = get_data(data='test')
@@ -116,7 +118,6 @@ def layer_images():
             input_im = im2feat(stimuli_test[0])
             print input_im.shape
             named_features = conv(input_im)
-            
             switch_dict = OrderedDict()
             for name in named_features:
                 
