@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 from pretrained_networks import get_vgg_net
 from unwrap_deconvnet import get_deconv
 from makedeconvnet import load_conv_and_deconv
