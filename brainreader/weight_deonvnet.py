@@ -131,17 +131,16 @@ def layer_images():
             zeroed[indices] = 0
 
             plt.subplot(2, 1, 1)
-            plt.imshow(raw_content_image)
-            plt.title('Image')
+            plt.imshow(feat2im(input_im))
+            plt.title('Features')
+            plt.show()
             plt.subplot(2, 1, 2)
             # plt.imshow(put_data_in_grid(named_features[layer][0]),
             #cmap='gray', interpolation = 'nearest')
             plt.imshow(feat2im(zeroed))
             plt.title('Features')
             plt.show()
-            plt.imshow(feat2im(image))
-            plt.title('Features')
-            plt.show()
+            
             # raw_content_image = feat2im(im2feat(stimuli_test[0]))
             # plt.figure(figsize = (8,3))
             # plt.subplot(2, 1, 1)
