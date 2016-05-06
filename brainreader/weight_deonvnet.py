@@ -123,7 +123,7 @@ def layer_images():
             deconv_net = load_conv_and_deconv()
             net = get_deconv(switch_dict, network_params=deconv_net, from_layer= layername)
             deconv = net.compile()
-            image_reconstructed = deconv(features)
+            image_reconstruct = deconv(features)
             #test only showing strongest activation#
             maxval = np.amax(image_reconstruct, axis = 1)
             zeroed = np.asarray(image_reconstruct)
