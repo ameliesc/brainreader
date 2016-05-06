@@ -111,7 +111,7 @@ def demo_brainreader(layername):
     plt.imshow(feat2im(zeroed))
     plt.title('Features')
     plt.show()
-    plt.imshow(feat2im(image))
+    plt.imshow(feat2im(input_im))
     plt.title('Features')
     plt.show()
 
