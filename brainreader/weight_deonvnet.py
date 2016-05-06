@@ -108,8 +108,32 @@ def layer_images():
             index = dic[1][1][0]
             index_1 = np.where(cost < 10)
             index = index[index_1]
+            net = get_vgg_net(up_to_layer = layername)
+            func = net.get_named_layer_activations.compile()
             for j in range(0,index.shape[0]):
-                image_reconstructed, raw_content_image = conv_and_deconv(layername,i,j)
+                 
+                 stimuli_test = get_data(data='test')
+                 input_im = np.empty([1, 3, 224, 224])
+                 input_im = im2feat(stimuli_test[0])
+                 print input_im.shape
+                 named_features = func(input_im)
+                 
+                 switch_dict = OrderedDict()
+                 for name in named_features:
+                     
+                     if 'switch' in name:
+                         switch_dict[name] = named_features[name]
+                         
+                features =  named_features[layername+'_layer']
+                
+                weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (i, layername))
+                w_times_feat = features * np.reshape(weights[:, j],features.shape)
+                features = w_times_feat
+                deconv = load_conv_and_deconv()
+                net = get_deconv(switch_dict, network_params=deconv, from_layer= layername)
+                func = net.compile()
+                image_reconstruct = func(features)
+                raw_content_image = feat2im(im2feat(stimuli_test[0]))
                 plt.figure(j)
                 plt.subplot(2, 1, 1)
                 plt.imshow(raw_content_image, cmap='Greys_r')
