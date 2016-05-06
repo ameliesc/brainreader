@@ -105,7 +105,7 @@ def layer_images():
             dic  = filtervoxels(layername,n = i)
             cost = dic[1][0]
             index = dic[1][1][0]
-            index_1 = np.where(cost < 2)
+            index_1 = np.where(cost < 10)
             index = index[index_1]
             for j in range(0,index.shape[0]):
                 features, raw_content_image = convolutuion(layername,i)
