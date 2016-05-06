@@ -20,12 +20,12 @@ def filtervoxels(layer_name, n = 1):
    
     print "Filtering voxels in layer %s in regions %s" % (layer_name,n)
  
-    layer = dd.io.load('/data/regression_cost_roi%s_%s.h5') % (n,layer_name)
+    layer = dd.io.load('/data/regression_cost_roi%s_%s.h5' % (n,layer_name))
    
-    layer_init = dd.io.load('/data/regression_cost_init_roi%s_%s.h5') % (n,layer_name)
+    layer_init = dd.io.load('/data/regression_cost_init_roi%s_%s.h5' % (n,layer_name))
     layer_new = OrderedDict()
     for i in range (1,120): #   conv5_new[i] = (conv5[i][np.where(np.less(conv5[i] < conv5_i[i]))], np.where(np.less(conv5[i] < conv5_i[i])))
-        layer_new[i] = (layer[i][np.where(np.less(layer[i] , layer_init[i]) )], np.where(np.less(layer[i] , layer_init[i])))
+        layer_new[i] = (layer[i][np.where(np.less(layer[i] , layer_init[i]) )] , np.where(np.less(layer[i] , layer_init[i])))
     return layer_new
    
 
