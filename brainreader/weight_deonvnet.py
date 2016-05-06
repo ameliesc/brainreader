@@ -129,8 +129,8 @@ def layer_images():
             weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (i, layername))
             w_times_feat = features * np.reshape(weights[:, 0],features.shape)
             features = w_times_feat
-            deconv = load_conv_and_deconv()
-            net = get_deconv(switch_dict, network_params=deconv, from_layer= layername)
+            deconv_net = load_conv_and_deconv()
+            net = get_deconv(switch_dict, network_params=deconv_net, from_layer= layername)
             deconv = net.compile()
             image_reconstructed = deconv(features)
             raw_content_image = feat2im(im2feat(stimuli_test[0]))
@@ -160,7 +160,6 @@ def layer_images():
                     weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (i, layername))
                     w_times_feat = features * np.reshape(weights[:, j],features.shape)
                     features = w_times_feat
-                    deconv = load_conv_and_deconv()
                     image_reconstructed = deconv(features)
                     raw_content_image = feat2im(im2feat(stimuli_test[k]))
                     plt.figure(figsize = (8,3))
