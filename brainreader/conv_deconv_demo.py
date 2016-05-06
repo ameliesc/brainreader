@@ -81,8 +81,8 @@ def demo_brainreader(layername):
     raw_content_image = feat2im(im2feat(stimuli_test[0]))
    
     net = get_vgg_net(up_to_layer = layername)
-    func = net.get_named_layer_activations.compile()
-    named_features = func(input_im)
+    conv = net.get_named_layer_activations.compile()
+    named_features = conv(input_im)
     
 
     switch_dict = OrderedDict()
@@ -91,17 +91,17 @@ def demo_brainreader(layername):
         if 'switch' in name:
             switch_dict[name] = named_features[name]
 
-    deconv = load_conv_and_deconv()
-    net = get_deconv(switch_dict, network_params=deconv, from_layer= layername)
-    func = net.compile()
-    image_reconstruct = func(named_features[layername+'_layer'])
+    deconv_net = load_conv_and_deconv()
+    net = get_deconv(switch_dict, network_params=deconv_net, from_layer= layername)
+    deconv = net.compile()
+    image_reconstruct = deconv(named_features[layername+'_layer'])
     #maxval = np.amax(image_reconstruct, axis = 1)
     #zeroed = np.asarray(image_reconstruct)
     #indices = zeroed < maxval
     #zeroed[indices] = 0
     #zeroed
      # Plot
-
+    pp = PdfPages('%s_wo_weights.pdf' %(layername))
     plt.subplot(2, 1, 1)
     plt.imshow(raw_content_image)
     plt.title('Image')
@@ -111,6 +111,26 @@ def demo_brainreader(layername):
     plt.imshow(feat2im(image_reconstruct))
     plt.title('Features')
     plt.show()
+    pp.savefig()
+    for i in range(1,stimuli_test.shape[0]):
+        input_im = np.empty([1, 3, 224, 224])
+        input_im = im2feat(stimuli_test[i])
+        raw_content_image = feat2im(im2feat(stimuli_test[i]))
+        named_features = conv(input_im)
+        image_reconstruct = deconv(named_features[layername+'_layer'])
+        pp = PdfPages('%s_wo_weights.pdf' %(layername))
+        plt.subplot(2, 1, 1)
+        plt.imshow(raw_content_image)
+        plt.title('Image')
+        plt.subplot(2, 1, 2)
+        # plt.imshow(put_data_in_grid(named_features[layer][0]),
+        #cmap='gray', interpolation = 'nearest')
+        plt.imshow(feat2im(image_reconstruct))
+        plt.title('Features')
+        plt.show()
+        pp.savefig()
+    pp.close()
+        
     #plt.imshow(feat2im(input_im))
     #plt.title('Features')
     #plt.savefig("test2.png")
