@@ -91,7 +91,7 @@ def conv_and_deconv(layername, n, voxel_index):
     net = get_deconv(switch_dict, network_params=deconv, from_layer= layername)
     func = net.compile()
     image_reconstruct = func(features)
-    return image_reconstruct
+    return image_reconstruct, stimuli_test[0]
     #maxval = np.amax(image_reconstruct, axis = 1)
     #zeroed = np.asarray(image_reconstruct)
     #indices = zeroed < maxval
@@ -113,7 +113,7 @@ def layer_images():
             index_1 = np.where(cost < 10)
             index = index[index_1]
             for j in range(0,index.shape[0]):
-                image_reconstructed = conv_and_deconv(layername,i,j)
+                image_reconstructed, raw_content_image= conv_and_deconv(layername,i,j)
                 plt.figure(j)
                 plt.subplot(2, 1, 1)
                 plt.imshow(raw_content_image, cmap='Greys_r')
