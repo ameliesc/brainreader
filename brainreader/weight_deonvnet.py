@@ -102,6 +102,7 @@ def conv_and_deconv(layername, n, voxel_index):
 def layer_images():
     for layername in ['fc6', 'fc7', 'fc8']:
          for  i in [1,2,6,7]:
+            print "reconstructing image for layer %s and region %s" % (layername, i)
             pp = PdfPages('%s_%s.pdf' % (layername, i))
             dic  = filtervoxels(layername,n = i)
             cost = dic[1][0]
