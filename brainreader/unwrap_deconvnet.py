@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from brainreader.deconvnets import  Nonlinearity, Unpooler, Deconv, DeconvNet
+from deconvnets import  Nonlinearity, Unpooler, Deconv, DeconvNet
 from general.should_be_builtins import bad_value
 from makedeconvnet import load_conv_and_deconv
 
