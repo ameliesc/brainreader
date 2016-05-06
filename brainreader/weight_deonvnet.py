@@ -1,9 +1,8 @@
-from brainreader.pretrained_networks import get_vgg_net
-from brainreader.unwrap_deconvnet import get_deconv
-from brainreader.makedeconvnet import load_conv_and_deconv
+from pretrained_networks import get_vgg_net
+from unwrap_deconvnet import get_deconv
+from makedeconvnet import load_conv_and_deconv
 from plotting.data_conversion import put_data_in_grid
 from theano.gof.graph import Variable
-from brainreader.art_gallery import get_image
 import numpy as np
 from matplotlib import pyplot as plt
 import theano
@@ -103,7 +102,7 @@ def layer_images():
     for layername in ['fc6', 'fc7', 'fc8']:
         for  i in [1,2,6,7]:
             pp = PdfPages('%s_%s.pdf' % (layername, i))
-            tup  = analyse(layername,n = i)
+            tup  = filtervoxels(layername,n = i)
             cost = tup[0]
             index = tup[1]
             for j in range(0,index.shape[0]):
