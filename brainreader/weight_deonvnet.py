@@ -81,7 +81,7 @@ def convolutuion(layername, n):
 def deconvolution(features, layername,voxel_index,layershape,n):
     weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (n, layername))
     print weights.shape
-    w_times_feat = features[0,:,0,0] * np.reshape(weights[:, voxel_index], layershape)
+    w_times_feat = features[0,:,0,0] * weights[:, voxel_index]
     print features.shape
     print w_times_feat.shape
     features[0,:,0,0] = w_times_feat
