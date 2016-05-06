@@ -110,7 +110,7 @@ def layer_images():
             index_1 = np.where(cost < 10)
             index = index[index_1]
             net = get_vgg_net(up_to_layer = layername)
-            func = net.get_named_layer_activations.compile()
+            conv = net.get_named_layer_activations.compile()
             for j in range(0,index.shape[0]):
                 for k in range(0,120): 
                     stimuli_test = get_data(data='test')
@@ -119,7 +119,7 @@ def layer_images():
                     if k == 1:
                         return input_im
                     print input_im.shape
-                    named_features = func(input_im)
+                    named_features = conv(input_im)
 
                     switch_dict = OrderedDict()
                     for name in named_features:
@@ -134,8 +134,8 @@ def layer_images():
                     features = w_times_feat
                     deconv = load_conv_and_deconv()
                     net = get_deconv(switch_dict, network_params=deconv, from_layer= layername)
-                    func = net.compile()
-                    image_reconstructed = func(features)
+                    deconv = net.compile()
+                    image_reconstructed = deconv(features)
                     raw_content_image = feat2im(im2feat(stimuli_test[k]))
                     plt.figure(figsize = (8,3))
                     plt.subplot(2, 1, 1)
