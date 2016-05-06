@@ -3,7 +3,7 @@ from unwrap_deconvnet import get_deconv
 from makedeconvnet import load_conv_and_deconv
 from plotting.data_conversion import put_data_in_grid
 from theano.gof.graph import Variable
-from brainreader.art_gallery import get_image
+from art_gallery import get_image
 import numpy as np
 from matplotlib import pyplot as plt
 import theano
