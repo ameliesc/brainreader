@@ -17,6 +17,7 @@ from plotting.data_conversion import put_data_in_grid
 from sklearn import linear_model
 from scipy.io import loadmat
 from matplotlib import pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
 def im2feat(im):
     """
