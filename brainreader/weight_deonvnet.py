@@ -112,17 +112,17 @@ def layer_images():
             func = net.get_named_layer_activations.compile()
             for j in range(0,index.shape[0]):
                  
-                 stimuli_test = get_data(data='test')
-                 input_im = np.empty([1, 3, 224, 224])
-                 input_im = im2feat(stimuli_test[0])
-                 print input_im.shape
-                 named_features = func(input_im)
-                 
-                 switch_dict = OrderedDict()
-                 for name in named_features:
+                stimuli_test = get_data(data='test')
+                input_im = np.empty([1, 3, 224, 224])
+                input_im = im2feat(stimuli_test[0])
+                print input_im.shape
+                named_features = func(input_im)
+                
+                switch_dict = OrderedDict()
+                for name in named_features:
                      
-                     if 'switch' in name:
-                         switch_dict[name] = named_features[name]
+                    if 'switch' in name:
+                        switch_dict[name] = named_features[name]
                          
                 features =  named_features[layername+'_layer']
                 
