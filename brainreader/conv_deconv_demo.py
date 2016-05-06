@@ -50,6 +50,7 @@ def demo_brainreader(layername):
     net = get_vgg_net(up_to_layer = layername)
     func = net.get_named_layer_activations.compile()
     named_features = func(input_im)
+    
 
     switch_dict = OrderedDict()
     for name in named_features:
@@ -75,6 +76,9 @@ def demo_brainreader(layername):
      # plt.imshow(put_data_in_grid(named_features[layer][0]),
      #cmap='gray', interpolation = 'nearest')
     plt.imshow(feat2im(zeroed))
+    plt.title('Features')
+    plt.show()
+    plt.imshow(feat2im(image_reconstruct))
     plt.title('Features')
     plt.show()
 
