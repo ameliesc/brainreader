@@ -139,9 +139,9 @@ def layer_images():
             plt.title('Original Image')
             plt.subplot(2, 1, 2)
             plt.imshow(feat2im(image_reconstructed), cmap='Greys_r')
-            plt.title('Reconstuction of voxel %s' % (j))
+            plt.title('Reconstuction of voxel %s' % (index[0]))
             pp.savefig()
-            for j in range(1,index.shape[0]):
+            for j in index[1:]:
                 for k in range(1,120): 
                     stimuli_test = get_data(data='test')
                     input_im = np.empty([1, 3, 224, 224])
