@@ -116,6 +116,8 @@ def layer_images():
                     stimuli_test = get_data(data='test')
                     input_im = np.empty([1, 3, 224, 224])
                     input_im = im2feat(stimuli_test[k])
+                    if k == 1:
+                        return input_im
                     print input_im.shape
                     named_features = func(input_im)
 
