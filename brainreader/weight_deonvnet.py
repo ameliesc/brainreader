@@ -105,7 +105,6 @@ def layer_images(layername,i ):
     stimuli_test = get_data(data='test')
     input_im = np.empty([1, 3, 224, 224])
     input_im = im2feat(stimuli_test[0])
-    print input_im.shape
     named_features = conv(input_im)
     switch_dict = OrderedDict()
     for name in named_features:
@@ -148,7 +147,12 @@ def layer_images(layername,i ):
     plt.imshow(feat2im(zeroed))
     plt.title('Reconstuction of voxel %s' % (index[0]))
     pp.savefig()
+    m = 0
     for j in index[1:]:
+        
+        if m ==6:
+            pp.close
+            pp.PdfPages('Second_%s_%s.pdf' % (layername, i))
         for k in range(1,120): 
             stimuli_test = get_data(data='test')
             input_im = np.empty([1, 3, 224, 224])
@@ -172,4 +176,5 @@ def layer_images(layername,i ):
             plt.imshow(feat2im(zeroed))
             plt.title('Reconstuction of voxel %s' % (j))
             pp.savefig()
+            m +=1
     pp.close()
