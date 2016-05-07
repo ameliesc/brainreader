@@ -97,12 +97,13 @@ def demo_brainreader(layername):
         deconv_net = load_conv_and_deconv()
         net = get_deconv(switch_dict, network_params=deconv_net, from_layer= layername)
         deconv = net.compile()
-        image_reconstruct = deconv(named_features[layername+'_layer'])
-        maxval = np.amax(image_reconstruct, axis = 1)
-        zeroed = np.asarray(image_reconstruct)
-        indices = zeroed < maxval
+        max_act = np.amax(named_features[layername+'layer'], axis = 1)
+        zeroed = np.asarray(named_features[layername+'layer'])
+        indices = zeroed < max_act
         zeroed[indices] = 0
-        zeroed
+        image_reconstruct = deconv(zeroed)
+        maxval = np.amax(image_reconstruct, axis = 1)
+
          # Plot
         plt.figure()
         plt.subplot(2, 1, 1)
@@ -111,14 +112,7 @@ def demo_brainreader(layername):
         plt.subplot(2, 1, 2)
          # plt.imshow(put_data_in_grid(named_features[layer][0]),
          #cmap='gray', interpolation = 'nearest')
-        plt.imshow(feat2im(zeroed))
-        plt.title('Features')
+        plt.imshow(feat2im(image_reconstruct))
+        plt.title('Features stronges activation')
         plt.show()
-        pp.savefig('%s_wo_weights_image%s_zeroed.png' % (layername,i))
-
-
-        
-    #plt.imshow(feat2im(input_im))
-    #plt.title('Features')
-    #plt.savefig("test2.png")
-
+        pp.savefig('%s_wo_weights_image%s_max_act.png' % (layername,i))
