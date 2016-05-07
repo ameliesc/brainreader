@@ -150,5 +150,5 @@ def layer_images(layername,i ):
             plt.subplot(2, 1, 2)
             plt.imshow(feat2im(zeroed))
             plt.title('Reconstuction of voxel %s' % (index[j]))
-            plt.savefig('%s_%s_image%s.png' % (layername,n,index[j]))
+            plt.savefig('%s_%s_image%s.png' % (layername,i,index[j]))
 
