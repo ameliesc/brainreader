@@ -97,8 +97,8 @@ def demo_brainreader(layername):
         deconv_net = load_conv_and_deconv()
         net = get_deconv(switch_dict, network_params=deconv_net, from_layer= layername)
         deconv = net.compile()
-        max_act = np.amax(named_features[layername+'layer'], axis = 1)
-        zeroed = np.asarray(named_features[layername+'layer'])
+        max_act = np.amax(named_features[layername+'_layer'], axis = 1)
+        zeroed = np.asarray(named_features[layername+'_layer'])
         indices = zeroed < max_act
         zeroed[indices] = 0
         image_reconstruct = deconv(zeroed)
