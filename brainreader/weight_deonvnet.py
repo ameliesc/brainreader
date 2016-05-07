@@ -93,88 +93,67 @@ def conv_and_deconv(layername, n, voxel_index):
 def layer_images(layername,i ):
     print "reconstructing image for layer %s and region %s" % (layername, i)
     pp = PdfPages('%s_%s.pdf' % (layername, i))
-    dic  = filtervoxels(layername,n = i)
-    cost = dic[1][0]
-    index = dic[1][1][0]
-    index_1 = np.where(cost < 10)
-    index = index[index_1]
-    #if len(index) == 0:
-    #    continue
-    net = get_vgg_net(up_to_layer = layername)
-    conv = net.get_named_layer_activations.compile()
-    stimuli_test = get_data(data='test')
-    input_im = np.empty([1, 3, 224, 224])
-    input_im = im2feat(stimuli_test[0])
-    named_features = conv(input_im)
-    switch_dict = OrderedDict()
-    for name in named_features:
-
-        if 'switch' in name:
-            switch_dict[name] = named_features[name]
-
-    features =  named_features[layername+'_layer']
-
-    weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (i, layername))
-    w_times_feat = features * np.reshape(weights[:, 0],features.shape)
-    features = w_times_feat
-    deconv_net = load_conv_and_deconv()
-    net = get_deconv(switch_dict, network_params=deconv_net, from_layer= layername)
-    deconv = net.compile()
-    image_reconstruct = deconv(features)
-    #test only showing strongest activation#
-    maxval = np.amax(image_reconstruct, axis = 1)
-    zeroed = np.asarray(image_reconstruct)
-    indices = zeroed < maxval
-    zeroed[indices] = 0
-
-    plt.subplot(2, 1, 1)
-    plt.imshow(feat2im(input_im))
-    plt.title('Features')
-    plt.show()
-    plt.subplot(2, 1, 2)
-    # plt.imshow(put_data_in_grid(named_features[layer][0]),
-    #cmap='gray', interpolation = 'nearest')
-    plt.imshow(feat2im(zeroed))
-    plt.title('Features')
-    plt.show()
-
-    raw_content_image = feat2im(im2feat(stimuli_test[0]))
-    plt.figure(figsize = (8,3))
-    plt.subplot(2, 1, 1)
-    plt.imshow(raw_content_image)
-    plt.title('Original Image')
-    plt.subplot(2, 1, 2)
-    plt.imshow(feat2im(zeroed))
-    plt.title('Reconstuction of voxel %s' % (index[0]))
-    pp.savefig()
+   
     m = 0
-    for j in index[1:]:
+    for j in index:
         
         if m ==6:
             pp.close
             pp.PdfPages('Second_%s_%s.pdf' % (layername, i))
-        for k in range(1,120): 
+        for k in range(1,120):
+            dic  = filtervoxels(layername,n = i)
+            cost = dic[1][0]
+            index = dic[1][1][0]
+            index_1 = np.where(cost < 10)
+            index = index[index_1]
+            #if len(index) == 0:
+            #    continue
+            net = get_vgg_net(up_to_layer = layername)
+            conv = net.get_named_layer_activations.compile()
             stimuli_test = get_data(data='test')
             input_im = np.empty([1, 3, 224, 224])
             input_im = im2feat(stimuli_test[k])
             named_features = conv(input_im)
+            switch_dict = OrderedDict()
+            for name in named_features:
+
+                if 'switch' in name:
+                    switch_dict[name] = named_features[name]
+
             features =  named_features[layername+'_layer']
+
             weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (i, layername))
-            w_times_feat = features * np.reshape(weights[:, j],features.shape)
+            w_times_feat = features * np.reshape(weights[:, 0],features.shape)
             features = w_times_feat
+            deconv_net = load_conv_and_deconv()
+            net = get_deconv(switch_dict, network_params=deconv_net, from_layer= layername)
+            deconv = net.compile()
             image_reconstruct = deconv(features)
+            #test only showing strongest activation#
             maxval = np.amax(image_reconstruct, axis = 1)
             zeroed = np.asarray(image_reconstruct)
             indices = zeroed < maxval
             zeroed[indices] = 0
-            raw_content_image = feat2im(im2feat(stimuli_test[k]))
-            plt.figure()
+
             plt.subplot(2, 1, 1)
             plt.imshow(feat2im(input_im))
+            plt.title('Features')
+            plt.show()
+            plt.subplot(2, 1, 2)
+            # plt.imshow(put_data_in_grid(named_features[layer][0]),
+            #cmap='gray', interpolation = 'nearest')
+            plt.imshow(feat2im(zeroed))
+            plt.title('Features')
+            plt.show()
+
+            raw_content_image = feat2im(im2feat(stimuli_test[i]))
+            plt.figure(figsize = (8,3))
+            plt.subplot(2, 1, 1)
+            plt.imshow(raw_content_image)
             plt.title('Original Image')
             plt.subplot(2, 1, 2)
             plt.imshow(feat2im(zeroed))
-            plt.title('Reconstuction of voxel %s' % (j))
+            plt.title('Reconstuction of voxel %s' % (index[j]))
             pp.savefig()
             m +=1
     pp.close()
