@@ -114,7 +114,7 @@ def demo_brainreader(layername):
         plt.imshow(feat2im(zeroed))
         plt.title('Features')
         plt.show()
-        pp.savefig('%s_wo_weights_image%s_zeroed.png' % (layername,i))
+        plt.savefig('%s_wo_weights_image%s_zeroed.png' % (layername,i))
 
 
         
