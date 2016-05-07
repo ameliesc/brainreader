@@ -101,6 +101,7 @@ def demo_brainreader(layername):
         zeroed = np.asarray(named_features[layername+'_layer'])
         indices = zeroed < max_act
         zeroed[indices] = 0
+        return zeroed
         image_reconstruct = deconv(zeroed)
         maxval = np.amax(image_reconstruct, axis = 1)
         zeroed = np.asarray(image_reconstruct)
