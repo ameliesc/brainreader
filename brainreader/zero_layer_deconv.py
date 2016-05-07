@@ -102,27 +102,27 @@ def demo_brainreader(layername):
         zeroed[indices] = 0
         deconv = net.compile()
         image_reconstruct = deconv(zeroed)
-        maxval = np.amax(image_reconstruct, axis = 1)
-        zeroed = np.asarray(image_reconstruct)
-        indices = zeroed < maxval
-        zeroed[indices] = 0
+        #maxval = np.amax(image_reconstruct, axis = 1)
+        #zeroed = np.asarray(image_reconstruct)
+        #indices = zeroed < maxval
+        #zeroed[indices] = 0
          # Plot
         plt.figure()
-        plt.subplot(3, 1, 1)
+        plt.subplot(2, 1, 1)
         plt.imshow(raw_content_image)
         plt.title('Image')
-        plt.subplot(3, 1, 2)
+        plt.subplot(2, 1, 2)
          # plt.imshow(put_data_in_grid(named_features[layer][0]),
          #cmap='gray', interpolation = 'nearest')
-        plt.imshow(feat2im(zeroed))
-        plt.title('Features stronges activation and zeroed dimension')
-        plt.show()
-        plt.savefig('%s_wo_weights_image%s_max_act_zeroed.png' % (layername,i))
-        plt.subplot(3, 1, 3)
+        #plt.imshow(feat2im(zeroed))
+        #plt.title('Features stronges activation and zeroed dimension')
+        #plt.show()
+        #plt.savefig('%s_wo_weights_image%s_max_act_zeroed.png' % (layername,i))
+        #plt.subplot(3, 1, 3)
          # plt.imshow(put_data_in_grid(named_features[layer][0]),
          #cmap='gray', interpolation = 'nearest')
         plt.imshow(feat2im(image_reconstruct))
         plt.title('Features stronges activation - no zeroed dimension')
         plt.show()
-        plt.savefig('%s_wo_weights_image%s_max_act_zeroed.png' % (layername,i))
+        plt.savefig('%s_wo_weights_image%s_max_act_notzeroed.png' % (layername,i))
 
