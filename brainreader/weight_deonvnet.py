@@ -131,7 +131,7 @@ def layer_images(layername,i ):
             zeroed = np.asarray(image_reconstruct)
             indices = zeroed < maxval
             zeroed[indices] = 0
-            raw_content_image = feat2im(im2feat(stimuli_test[i]))
+            raw_content_image = feat2im(im2feat(stimuli_test[k]))
             plt.figure()
             plt.subplot(2, 1, 1)
             plt.imshow(raw_content_image)
