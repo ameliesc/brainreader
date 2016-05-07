@@ -104,7 +104,6 @@ def demo_brainreader(layername):
         zeroed[indices] = 0
         zeroed
          # Plot
-        pp = PdfPages('%s_wo_weights.pdf' %(layername))
         plt.subplot(2, 1, 1)
         plt.imshow(raw_content_image)
         plt.title('Image')
@@ -114,9 +113,9 @@ def demo_brainreader(layername):
         plt.imshow(feat2im(image_reconstruct))
         plt.title('Features')
         plt.show()
-        pp.savefig()
+        pp.savefig('%s_%s_wo_weights_image%s.png%' % (layername,n,k))
 
-    pp.close()
+
         
     #plt.imshow(feat2im(input_im))
     #plt.title('Features')

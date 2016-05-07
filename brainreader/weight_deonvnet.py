@@ -92,7 +92,6 @@ def conv_and_deconv(layername, n, voxel_index):
     
 def layer_images(layername,i ):
     print "reconstructing image for layer %s and region %s" % (layername, i)
-    pp = PdfPages('%s_%s.pdf' % (layername, i))
    
     m = 0
     dic  = filtervoxels(layername,n = i)
@@ -100,11 +99,7 @@ def layer_images(layername,i ):
     index = dic[1][1][0]
     index_1 = np.where(cost < 10)
     index = index[index_1]
-    for j in index:
-        
-        if m ==6:
-            pp.close
-            pp.PdfPages('Second_%s_%s.pdf' % (layername, i))
+    for j in range(0,len(index)):
         for k in range(1,120):
             
             #if len(index) == 0:
@@ -155,6 +150,5 @@ def layer_images(layername,i ):
             plt.subplot(2, 1, 2)
             plt.imshow(feat2im(zeroed))
             plt.title('Reconstuction of voxel %s' % (index[j]))
-            pp.savefig()
-            m +=1
-    pp.close()
+            plt.savefig('%s_%s_image%s.png' % (layername,n,k))
+
