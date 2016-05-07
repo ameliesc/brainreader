@@ -99,8 +99,9 @@ def layer_images(layername,i ):
     index = dic[1][1][0]
     index_1 = np.where(cost < 10)
     index = index[index_1]
-    for j in range(0,len(index)):
-        for k in range(0,120):
+    for k in range(0,120):
+        for j in range(0,len(index)):
+        
             
             #if len(index) == 0:
             #    continue
@@ -150,5 +151,5 @@ def layer_images(layername,i ):
             plt.subplot(2, 1, 2)
             plt.imshow(feat2im(zeroed))
             plt.title('Reconstuction of voxel %s' % (index[j]))
-            plt.savefig('%s_%s_image%s.png' % (layername,i,k))
+            plt.savefig('%s_%s_image%s_voxel%s.png' % (layername,i,k, index[j]))
 
