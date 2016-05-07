@@ -95,17 +95,18 @@ def layer_images(layername,i ):
     pp = PdfPages('%s_%s.pdf' % (layername, i))
    
     m = 0
+    dic  = filtervoxels(layername,n = i)
+    cost = dic[1][0]
+    index = dic[1][1][0]
+    index_1 = np.where(cost < 10)
+    index = index[index_1]
     for j in index:
         
         if m ==6:
             pp.close
             pp.PdfPages('Second_%s_%s.pdf' % (layername, i))
         for k in range(1,120):
-            dic  = filtervoxels(layername,n = i)
-            cost = dic[1][0]
-            index = dic[1][1][0]
-            index_1 = np.where(cost < 10)
-            index = index[index_1]
+            
             #if len(index) == 0:
             #    continue
             net = get_vgg_net(up_to_layer = layername)
