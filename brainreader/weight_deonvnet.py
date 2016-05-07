@@ -130,7 +130,7 @@ def layer_images(layername,i ):
             zeroed = np.asarray(image_reconstruct)
             indices = zeroed < maxval
             zeroed[indices] = 0
-
+            plt.figure
             plt.subplot(2, 1, 1)
             plt.imshow(feat2im(input_im))
             plt.title('Features')
