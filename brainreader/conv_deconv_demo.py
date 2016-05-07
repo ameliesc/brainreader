@@ -77,7 +77,7 @@ def feat2im(feat):
 
 def demo_brainreader(layername):
     stimuli_test = get_data(data='test')
-    for i in range(0,stimuli_test.shape[0]):
+    for i in range(0,10):
 
         input_im = np.empty([1, 3, 224, 224])
         input_im = im2feat(stimuli_test[i])
@@ -116,8 +116,9 @@ def demo_brainreader(layername):
         plt.show()
         plt.savefig('%s_wo_weights_image%s_zeroed.png' % (layername,i))
 
-
-        
+if __name__ == '__main__':
+    demo_brainreader('fc7')
+    demo_brainreader('fc8') 
     #plt.imshow(feat2im(input_im))
     #plt.title('Features')
     #plt.savefig("test2.png")

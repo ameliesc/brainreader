@@ -77,7 +77,7 @@ def feat2im(feat):
 
 def demo_brainreader(layername):
     stimuli_test = get_data(data='test')
-    for i in range(0,stimuli_test.shape[0]):
+    for i in range(0,10):
         
         input_im = np.empty([1, 3, 224, 224])
         input_im = im2feat(stimuli_test[i])
