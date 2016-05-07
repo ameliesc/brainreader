@@ -90,7 +90,7 @@ def conv_and_deconv(layername, n, voxel_index):
 
 
     
-def layer_images(layername,i ):
+def demo_brainreader(layername,i ):
     print "reconstructing image for layer %s and region %s" % (layername, i)
    
     m = 0
