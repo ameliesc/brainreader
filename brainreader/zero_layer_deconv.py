@@ -115,4 +115,4 @@ def demo_brainreader(layername):
         plt.imshow(feat2im(image_reconstruct))
         plt.title('Features stronges activation')
         plt.show()
-        pp.savefig('%s_wo_weights_image%s_max_act.png' % (layername,i))
+        plt.savefig('%s_wo_weights_image%s_max_act.png' % (layername,i))
