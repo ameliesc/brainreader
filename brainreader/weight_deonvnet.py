@@ -142,9 +142,7 @@ def demo_brainreader(layername,i ):
         plt.savefig('%s_%s_image%s_voxel%s.png' % (layername,i,k, index[j]))
 
 if __name__ == '__main__':
-    demo_brainreader('fc6',2)
-    demo_brainreader('fc6',1)
-    demo_brainreader('fc7',7)
+    demo_brainreader('fc6',6)
     demo_brainreader('fc7',6)
     demo_brainreader('fc7',2)
     demo_brainreader('fc7',1)
