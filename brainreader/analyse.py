@@ -52,7 +52,7 @@ def maxcost():
         region = OrderedDict()
         for n in [1,2,6,7]:
             cost = dd.io.load('/data/regression_cost_roi%s_%s.h5' % (n,name))
-            region[n] = max(cost)
+            region[n] = max(cost[0])
         layer[name] = region
     return layer
 def avgcost(roi):  
