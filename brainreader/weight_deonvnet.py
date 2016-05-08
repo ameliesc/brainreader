@@ -128,6 +128,10 @@ def demo_brainreader(layername,i ):
             image_reconstruct = deconv(features)
             #test only showing strongest activation#
             raw_content_image = feat2im(im2feat(stimuli_test[k]))
+            maxval = np.amax(image_reconstruct, axis = 1)
+            zeroed = np.asarray(image_reconstruct)
+            indices = zeroed < maxval
+            zeroed[indices] = 0
             plt.figure()
             plt.subplot(2, 1, 1)
             plt.imshow(raw_content_image)
