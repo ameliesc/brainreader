@@ -100,46 +100,46 @@ def demo_brainreader(layername,i ):
     index_1 = np.where(cost < 10)
     index = index[index_1]
     for k in range(0,10):
-        j = 1
+        for j in index:
 
 
         #if len(index) == 0:
-        #    continue
-        net = get_vgg_net(up_to_layer = layername)
-        conv = net.get_named_layer_activations.compile()
-        stimuli_test = get_data(data='test')
-        input_im = np.empty([1, 3, 224, 224])
-        input_im = im2feat(stimuli_test[k])
-        named_features = conv(input_im)
-        switch_dict = OrderedDict()
-        for name in named_features:
+            #    continue
+            net = get_vgg_net(up_to_layer = layername)
+            conv = net.get_named_layer_activations.compile()
+            stimuli_test = get_data(data='test')
+            input_im = np.empty([1, 3, 224, 224])
+            input_im = im2feat(stimuli_test[k])
+            named_features = conv(input_im)
+            switch_dict = OrderedDict()
+            for name in named_features:
 
-            if 'switch' in name:
-                switch_dict[name] = named_features[name]
+                if 'switch' in name:
+                    switch_dict[name] = named_features[name]
 
-        features =  named_features[layername+'_layer']
+            features =  named_features[layername+'_layer']
 
-        weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (i, layername))
-        w_times_feat = features * np.reshape(weights[:, index[j]],features.shape)
-        features = w_times_feat
-        deconv_net = load_conv_and_deconv()
-        net = get_deconv(switch_dict, network_params=deconv_net, from_layer= layername)
-        deconv = net.compile()
-        image_reconstruct = deconv(features)
-        #test only showing strongest activation#
-        #maxval = np.amax(image_reconstruct, axis = 1)
-        #zeroed = np.asarray(image_reconstruct)
-        #indices = zeroed < maxval
-        #zeroed[indices] = 0
-        raw_content_image = feat2im(im2feat(stimuli_test[k]))
-        plt.figure()
-        plt.subplot(2, 1, 1)
-        plt.imshow(raw_content_image)
-        plt.title('Original Image')
-        plt.subplot(2, 1, 2)
-        plt.imshow(feat2im(image_reconstruct))
-        plt.title('Reconstuction of voxel %s' % (index[j]))
-        plt.savefig('%s_%s_image%s_voxel%s_corrected.png' % (layername,i,k, index[j]))
+            weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (i, layername))
+            w_times_feat = features * np.reshape(weights[:, j],features.shape)
+            features = w_times_feat
+            deconv_net = load_conv_and_deconv()
+            net = get_deconv(switch_dict, network_params=deconv_net, from_layer= layername)
+            deconv = net.compile()
+            image_reconstruct = deconv(features)
+            #test only showing strongest activation#
+            #maxval = np.amax(image_reconstruct, axis = 1)
+            #zeroed = np.asarray(image_reconstruct)
+            #indices = zeroed < maxval
+            #zeroed[indices] = 0
+            raw_content_image = feat2im(im2feat(stimuli_test[k]))
+            plt.figure()
+            plt.subplot(2, 1, 1)
+            plt.imshow(raw_content_image)
+            plt.title('Original Image')
+            plt.subplot(2, 1, 2)
+            plt.imshow(feat2im(image_reconstruct))
+            plt.title('Reconstuction of voxel %s' % (index[j]))
+            plt.savefig('%s_%s_image%s_voxel%s_corrected.png' % (layername,i,k, j))
 
 if __name__ == '__main__':
     demo_brainreader('fc6',6)
