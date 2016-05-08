@@ -138,6 +138,7 @@ def demo_brainreader(layername = 'fc6',i = 6 ):
         plt.title('Original Image')
         plt.subplot(2, 1, 2)
         plt.imshow(feat2im(zeroed))
-        plt.title('Reconstuction of voxel %s' % (index[j]))
-        plt.savefig('%s_%s_image%s_voxel%s_weight_nonzero.png' % (layername,i,k, 1168))
+        voxel = 1168
+        plt.title('Reconstuction of voxel %s' % (voxel))
+        plt.savefig('%s_%s_image%s_maxvoxel%s.png' % (layername,i,k, voxel))
 
