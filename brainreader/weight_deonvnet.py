@@ -138,7 +138,7 @@ def demo_brainreader(layername,i ):
             plt.title('Original Image')
             plt.subplot(2, 1, 2)
             plt.imshow(feat2im(zeroed))
-            plt.title('Reconstuction of voxel %s' % (index[j]))
+            plt.title('Reconstuction of voxel %s' % (j))
             plt.savefig('%s_%s_image%s_voxel%s_corrected.png' % (layername,i,k, j))
 
 if __name__ == '__main__':
