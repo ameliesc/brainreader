@@ -90,7 +90,7 @@ def conv_and_deconv(layername, n, voxel_index):
 
 
     
-def demo_brainreader(layername,i ):
+def demo_brainreader(layername = 'fc6',i = 6 ):
     print "reconstructing image for layer %s and region %s" % (layername, i)
    
     m = 0
@@ -120,7 +120,7 @@ def demo_brainreader(layername,i ):
         features =  named_features[layername+'_layer']
 
         weights = dd.io.load('/data/regression_coefficients_roi%s_%s.h5' % (i, layername))
-        w_times_feat = features * np.reshape(weights[:, index[j]],features.shape)
+        w_times_feat = features * np.reshape(weights[:, 1168],features.shape)
         features = w_times_feat
         deconv_net = load_conv_and_deconv()
         net = get_deconv(switch_dict, network_params=deconv_net, from_layer= layername)
@@ -139,14 +139,5 @@ def demo_brainreader(layername,i ):
         plt.subplot(2, 1, 2)
         plt.imshow(feat2im(image_reconstruct))
         plt.title('Reconstuction of voxel %s' % (index[j]))
-        plt.savefig('%s_%s_image%s_voxel%s_weight_nonzero.png' % (layername,i,k, index[j]))
+        plt.savefig('%s_%s_image%s_voxel%s_weight_nonzero.png' % (layername,i,k, 1168))
 
-if __name__ == '__main__':
-    demo_brainreader('fc6',6)
-    demo_brainreader('fc7',6)
-    demo_brainreader('fc7',2)
-    demo_brainreader('fc7',1)
-    demo_brainreader('fc8',7)
-    demo_brainreader('fc8',6)
-    demo_brainreader('fc8',2)
-    demo_brainreader('fc8',1) 
