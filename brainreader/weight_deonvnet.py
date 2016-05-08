@@ -139,7 +139,7 @@ def demo_brainreader(layername,i ):
         plt.subplot(2, 1, 2)
         plt.imshow(feat2im(image_reconstruct))
         plt.title('Reconstuction of voxel %s' % (index[j]))
-        plt.savefig('%s_%s_image%s_voxel%s_weight_nonzero.png' % (layername,i,k, index[j]))
+        plt.savefig('%s_%s_image%s_voxel%s_corrected.png' % (layername,i,k, index[j]))
 
 if __name__ == '__main__':
     demo_brainreader('fc6',6)
