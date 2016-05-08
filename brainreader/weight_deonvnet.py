@@ -127,17 +127,17 @@ def demo_brainreader(layername,i ):
             deconv = net.compile()
             image_reconstruct = deconv(features)
             #test only showing strongest activation#
-            #maxval = np.amax(image_reconstruct, axis = 1)
-            #zeroed = np.asarray(image_reconstruct)
-            #indices = zeroed < maxval
-            #zeroed[indices] = 0
+            maxval = np.amax(image_reconstruct, axis = 1)
+            zeroed = np.asarray(image_reconstruct)
+            indices = zeroed < maxval
+            zeroed[indices] = 0
             raw_content_image = feat2im(im2feat(stimuli_test[k]))
             plt.figure()
             plt.subplot(2, 1, 1)
             plt.imshow(raw_content_image)
             plt.title('Original Image')
             plt.subplot(2, 1, 2)
-            plt.imshow(feat2im(image_reconstruct))
+            plt.imshow(feat2im(zeroed))
             plt.title('Reconstuction of voxel %s' % (index[j]))
             plt.savefig('%s_%s_image%s_voxel%s_corrected.png' % (layername,i,k, j))
 
