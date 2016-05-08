@@ -51,7 +51,7 @@ def maxcost():
     for name in  ['fc6', 'fc7', 'fc8']:
         region = OrderedDict()
         for n in [1,2,6,7]:
-            cost = dd.io.load('/data/regression_cost_roi%s_%s.h5' % (n,layer_name))
+            cost = dd.io.load('/data/regression_cost_roi%s_%s.h5' % (n,name))
             region[n] = max(cost)
         layer[name] = region
     return layer
